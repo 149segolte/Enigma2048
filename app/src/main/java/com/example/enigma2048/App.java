@@ -9,6 +9,6 @@ public class App extends Application {
     public void onCreate() {
         super.onCreate();
         // Apply dynamic color
-        DynamicColors.applyToActivitiesIfAvailable(this);
+        //DynamicColors.applyToActivitiesIfAvailable(this);
     }
 }

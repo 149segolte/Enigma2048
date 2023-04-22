@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.Enigma2048" parent="Theme.Base.Light">
+        <!--<item name="android:windowBackground">@android:color/system_accent2_10</item>
+        <item name="android:windowSplashScreenBackground">@android:color/system_accent2_10</item>-->
+    </style>
+</resources>
