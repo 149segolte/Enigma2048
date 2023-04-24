@@ -8,6 +8,7 @@ import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentResultListener;
+import androidx.transition.TransitionInflater;
 
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
@@ -18,33 +19,12 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
     }
 
     @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-
-        MaterialToolbar toolbar = getActivity().findViewById(R.id.toolbar);
-        toolbar.setNavigationIcon(null);
-        toolbar.setTitle(null);
-        toolbar.setNavigationOnClickListener(null);
-        toolbar.getMenu().findItem(R.id.action_settings).setVisible(true);
-    }
-
-    @Override
-    public void onClick(View view) {
-        int id = view.getId();
-        if (id == R.id.continue_button) {
-        } else if (id == R.id.play_button) {
-        } else if (id == R.id.leaderboards_button) {
-            getParentFragmentManager().beginTransaction()
-                    .replace(R.id.fragment_container_view, LeaderboardsFragment.class, null)
-                    .commit();
-        } else {
-            getActivity().finishAffinity();
-        }
-    }
-
-    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        TransitionInflater inflater = TransitionInflater.from(requireContext());
+        setEnterTransition(inflater.inflateTransition(R.transition.fade_home));
+        setExitTransition(inflater.inflateTransition(R.transition.fade_home));
 
         getParentFragmentManager().setFragmentResultListener("status", this, new FragmentResultListener() {
             @Override
@@ -75,5 +55,39 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         };
         requireActivity().getOnBackPressedDispatcher().addCallback(this, callback);
         // The callback can be enabled or disabled here or in handleOnBackPressed()
+    }
+
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        Button continueButton = view.findViewById(R.id.continue_button);
+        Button playButton = view.findViewById(R.id.play_button);
+        Button leaderboardsButton = view.findViewById(R.id.leaderboards_button);
+        Button exitButton = view.findViewById(R.id.exit_button);
+        continueButton.setOnClickListener(this);
+        playButton.setOnClickListener(this);
+        leaderboardsButton.setOnClickListener(this);
+        exitButton.setOnClickListener(this);
+
+        MaterialToolbar toolbar = getActivity().findViewById(R.id.toolbar);
+        toolbar.setNavigationIcon(null);
+        toolbar.setTitle(null);
+        toolbar.setNavigationOnClickListener(null);
+        toolbar.getMenu().findItem(R.id.action_settings).setVisible(true);
+    }
+
+    @Override
+    public void onClick(View view) {
+        int id = view.getId();
+        if (id == R.id.continue_button) {
+        } else if (id == R.id.play_button) {
+        } else if (id == R.id.leaderboards_button) {
+            getParentFragmentManager().beginTransaction()
+                    .replace(R.id.fragment_container_view, LeaderboardsFragment.class, null)
+                    .commit();
+        } else {
+            getActivity().finishAffinity();
+        }
     }
 }
