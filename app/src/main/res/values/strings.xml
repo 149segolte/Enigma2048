@@ -2,11 +2,13 @@
     <string name="app_name">Enigma 2048</string>
     <string name="leaderboards">Leaderboards</string>
     <string name="play">Play</string>
-    <string name="settings">Settings</string>
+    <string name="title_settings">Settings</string>
 
-    <string name="lb_personal">Personal</string>
     <string name="lb_description">Leaderboards representing personal and global high scores</string>
+    <string name="lb_personal">Personal</string>
     <string name="lb_global">Global</string>
+
+    <string name="settings_button">Settings</string>
 
     <!-- Preference Titles -->
     <string name="messages_header">Messages</string>

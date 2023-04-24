@@ -3,9 +3,10 @@ package com.example.enigma2048;
 import android.os.Bundle;
 
 import androidx.activity.OnBackPressedCallback;
+import androidx.fragment.app.FragmentManager;
 import androidx.preference.PreferenceFragmentCompat;
 
-import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.appbar.MaterialToolbar;
 
 public class SettingsFragment extends PreferenceFragmentCompat {
 
@@ -18,16 +19,32 @@ public class SettingsFragment extends PreferenceFragmentCompat {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // This callback will only be called when the Fragment is at least Started.
+        // This callback will only be called when MyFragment is at least Started.
         OnBackPressedCallback callback = new OnBackPressedCallback(true /* enabled by default */) {
             @Override
             public void handleOnBackPressed() {
-                // Handle the back button event
-                BottomNavigationView bottomNavigationView = requireActivity().findViewById(R.id.bottom_navigation);
-                bottomNavigationView.setSelectedItemId(R.id.play);
+                FragmentManager fragmentManager = getParentFragmentManager();
+                fragmentManager.beginTransaction()
+                        .replace(R.id.fragment_container_view, HomeFragment.class, null)
+                        .commit();
             }
         };
         requireActivity().getOnBackPressedDispatcher().addCallback(this, callback);
-        // The callback can be enabled or disabled here or in handleOnBackPressed()
+    }
+
+    @Override
+    public void onViewCreated(android.view.View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        MaterialToolbar toolbar = getActivity().findViewById(R.id.toolbar);
+        toolbar.setNavigationIcon(R.drawable.baseline_arrow_back_24);
+        toolbar.setTitle(R.string.title_settings);
+        toolbar.setNavigationOnClickListener(v -> {
+            FragmentManager fragmentManager = getParentFragmentManager();
+            fragmentManager.beginTransaction()
+                    .replace(R.id.fragment_container_view, HomeFragment.class, null)
+                    .commit();
+        });
+        toolbar.getMenu().findItem(R.id.action_settings).setVisible(false);
     }
 }

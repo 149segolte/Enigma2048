@@ -4,8 +4,7 @@ import android.os.Bundle;
 
 import androidx.activity.OnBackPressedCallback;
 import androidx.fragment.app.Fragment;
-
-import com.google.android.material.bottomnavigation.BottomNavigationView;
+import androidx.fragment.app.FragmentManager;
 
 public class LeaderboardsFragment extends Fragment {
     public LeaderboardsFragment() {
@@ -16,16 +15,16 @@ public class LeaderboardsFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // This callback will only be called when the Fragment is at least Started.
+        // This callback will only be called when MyFragment is at least Started.
         OnBackPressedCallback callback = new OnBackPressedCallback(true /* enabled by default */) {
             @Override
             public void handleOnBackPressed() {
-                // Handle the back button event
-                BottomNavigationView bottomNavigationView = requireActivity().findViewById(R.id.bottom_navigation);
-                bottomNavigationView.setSelectedItemId(R.id.play);
+                FragmentManager fragmentManager = getParentFragmentManager();
+                fragmentManager.beginTransaction()
+                        .replace(R.id.fragment_container_view, HomeFragment.class, null)
+                        .commit();
             }
         };
         requireActivity().getOnBackPressedDispatcher().addCallback(this, callback);
-        // The callback can be enabled or disabled here or in handleOnBackPressed()
     }
 }
