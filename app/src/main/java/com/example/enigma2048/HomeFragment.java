@@ -14,7 +14,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 public class HomeFragment extends Fragment implements View.OnClickListener {
     public HomeFragment() {
-        super(R.layout.fragment_play);
+        super(R.layout.fragment_home);
     }
 
     @Override
