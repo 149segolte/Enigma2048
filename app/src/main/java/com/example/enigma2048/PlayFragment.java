@@ -5,11 +5,14 @@ import android.os.Bundle;
 import androidx.activity.OnBackPressedCallback;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.transition.TransitionInflater;
 
 import com.google.android.material.appbar.MaterialToolbar;
 
 public class PlayFragment extends Fragment {
+    private RuntimeStateViewModel viewModel;
+
     public PlayFragment() {
         super(R.layout.fragment_play);
     }
@@ -39,6 +42,13 @@ public class PlayFragment extends Fragment {
     @Override
     public void onViewCreated(android.view.View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        viewModel = new ViewModelProvider(requireActivity()).get(RuntimeStateViewModel.class);
+        viewModel.getValue().observe(getViewLifecycleOwner(), state -> {
+            if (state == null) {
+                viewModel.resetValue();
+            }
+        });
 
         MaterialToolbar toolbar = getActivity().findViewById(R.id.toolbar);
         toolbar.setNavigationIcon(R.drawable.baseline_arrow_back_24);

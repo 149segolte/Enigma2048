@@ -8,12 +8,16 @@ import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentResultListener;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.transition.TransitionInflater;
 
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 public class HomeFragment extends Fragment implements View.OnClickListener {
+    private RuntimeStateViewModel viewModel;
+    private boolean previous_game = false;
+
     public HomeFragment() {
         super(R.layout.fragment_home);
     }
@@ -29,12 +33,15 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         getParentFragmentManager().setFragmentResultListener("status", this, new FragmentResultListener() {
             @Override
             public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
-                boolean previous_game = result.getBoolean("previous_game");
-                Button continueButton = getActivity().findViewById(R.id.continue_button);
+                previous_game = result.getBoolean("previous_game");
+                Button playButton = getActivity().findViewById(R.id.play_button);
+                Button newGameButton = getActivity().findViewById(R.id.new_game_button);
                 if (previous_game) {
-                    continueButton.setVisibility(View.VISIBLE);
+                    playButton.setText("Continue");
+                    newGameButton.setVisibility(View.VISIBLE);
                 } else {
-                    continueButton.setVisibility(View.GONE);
+                    playButton.setText("New Game");
+                    newGameButton.setVisibility(View.GONE);
                 }
             }
         });
@@ -61,12 +68,14 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        Button continueButton = view.findViewById(R.id.continue_button);
+        viewModel = new ViewModelProvider(requireActivity()).get(RuntimeStateViewModel.class);
+
         Button playButton = view.findViewById(R.id.play_button);
+        Button newGameButton = view.findViewById(R.id.new_game_button);
         Button leaderboardsButton = view.findViewById(R.id.leaderboards_button);
         Button exitButton = view.findViewById(R.id.exit_button);
-        continueButton.setOnClickListener(this);
         playButton.setOnClickListener(this);
+        newGameButton.setOnClickListener(this);
         leaderboardsButton.setOnClickListener(this);
         exitButton.setOnClickListener(this);
 
@@ -80,11 +89,12 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onClick(View view) {
         int id = view.getId();
-        if (id == R.id.continue_button) {
+        if (id == R.id.play_button && previous_game) {
             getParentFragmentManager().beginTransaction()
                     .replace(R.id.fragment_container_view, PlayFragment.class, null)
                     .commit();
-        } else if (id == R.id.play_button) {
+        } else if (id == R.id.new_game_button || id == R.id.play_button) {
+            viewModel.resetValue();
             getParentFragmentManager().beginTransaction()
                     .replace(R.id.fragment_container_view, PlayFragment.class, null)
                     .commit();

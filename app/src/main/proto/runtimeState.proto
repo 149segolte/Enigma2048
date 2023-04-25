@@ -8,5 +8,7 @@ message RuntimeState {
   int32 moves = 2;
   int32 time = 3;
 
-  repeated int32 board = 4;
+  repeated int32 boardCell = 4;
+
+  bool previousGame = 5;
 }

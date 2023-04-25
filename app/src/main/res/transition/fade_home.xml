@@ -9,12 +9,12 @@
     </fade>
     <fade android:startDelay="50">
         <targets>
-            <target android:targetId="@+id/continue_button" />
+            <target android:targetId="@+id/play_button" />
         </targets>
     </fade>
     <fade android:startDelay="100">
         <targets>
-            <target android:targetId="@+id/play_button" />
+            <target android:targetId="@+id/new_game_button" />
         </targets>
     </fade>
     <fade android:startDelay="150">
