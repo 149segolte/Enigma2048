@@ -81,7 +81,13 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
     public void onClick(View view) {
         int id = view.getId();
         if (id == R.id.continue_button) {
+            getParentFragmentManager().beginTransaction()
+                    .replace(R.id.fragment_container_view, PlayFragment.class, null)
+                    .commit();
         } else if (id == R.id.play_button) {
+            getParentFragmentManager().beginTransaction()
+                    .replace(R.id.fragment_container_view, PlayFragment.class, null)
+                    .commit();
         } else if (id == R.id.leaderboards_button) {
             getParentFragmentManager().beginTransaction()
                     .replace(R.id.fragment_container_view, LeaderboardsFragment.class, null)
