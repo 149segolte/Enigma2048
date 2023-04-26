@@ -14,7 +14,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 public class HomeFragment extends Fragment implements View.OnClickListener {
     private RuntimeStateViewModel viewModel;
-    private boolean previous_game = false;
+    private final boolean previous_game = false;
 
     public HomeFragment() {
         super(R.layout.fragment_home);

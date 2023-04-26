@@ -1,9 +1,13 @@
 package com.example.enigma2048;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.GestureDetector;
+import android.view.Gravity;
 import android.view.MotionEvent;
 import android.widget.TableLayout;
+import android.widget.TableRow;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.OnBackPressedCallback;
@@ -18,7 +22,11 @@ import com.google.android.material.appbar.MaterialToolbar;
 public class PlayFragment extends Fragment {
     private RuntimeStateViewModel viewModel;
     private GestureDetectorCompat mDetector;
+    private TextView score;
+    private TextView moves;
+    private TextView time;
     private TableLayout board;
+    public RuntimeState state;
 
     public PlayFragment() {
         super(R.layout.fragment_play);
@@ -53,12 +61,15 @@ public class PlayFragment extends Fragment {
 
         viewModel = new ViewModelProvider(requireActivity()).get(RuntimeStateViewModel.class);
         viewModel.getValue().observe(getViewLifecycleOwner(), state -> {
-            if (state == null) {
-                viewModel.resetValue();
+            if (state != null) {
+                this.state = state;
             }
         });
 
-        board = getActivity().findViewById(R.id.board);
+        score = view.findViewById(R.id.score);
+        moves = view.findViewById(R.id.x);
+        time = view.findViewById(R.id.y);
+        board = view.findViewById(R.id.board);
         board.setOnTouchListener((v, event) -> mDetector.onTouchEvent(event));
 
         MaterialToolbar toolbar = getActivity().findViewById(R.id.toolbar);
@@ -76,7 +87,51 @@ public class PlayFragment extends Fragment {
 
     public void initializeBoard() {
         board.removeAllViews();
+        if (state == null) {
+            viewModel.resetValue();
+            state = viewModel.getValue().getValue();
+        }
+
+        score.setText(String.valueOf(state.getScore()));
+        moves.setText(String.valueOf(state.getMoves()));
+        time.setText(String.valueOf(state.getTime()));
+        if (state.getBoardCellCount() == 0) {
+            RuntimeState.Builder builder = state.toBuilder();
+            for (int i = 0; i < 16; i++) {
+                builder.addBoardCell(0);
+            }
+            viewModel.setValue(builder.build());
+            state = viewModel.getValue().getValue();
+        }
+
+        Log.d("Board", String.valueOf(state.getBoardCellCount()));
+
+        for (int i = 0; i < 4; i++) {
+            board.addView(new TableRow(getActivity()), new TableLayout.LayoutParams(
+                    TableLayout.LayoutParams.MATCH_PARENT,
+                    TableLayout.LayoutParams.MATCH_PARENT,
+                    1.0f
+            ));
+            TableRow row = (TableRow) board.getChildAt(i);
+            for (int j = 0; j < 4; j++) {
+                row.addView(new TextView(getActivity()), new TableRow.LayoutParams(
+                        TableRow.LayoutParams.MATCH_PARENT,
+                        TableRow.LayoutParams.MATCH_PARENT,
+                        1.0f
+                ));
+                TextView cell = (TextView) row.getChildAt(j);
+                cell.setGravity(Gravity.CENTER);
+                int value = state.getBoardCell(i * 4 + j);
+                if (value == 0) {
+                    cell.setText("");
+                } else {
+                    cell.setText(value);
+                }
+            }
+        }
+
     }
+
     class GesturesListener extends GestureDetector.SimpleOnGestureListener {
         private final int UP = 0;
         private final int DOWN = 1;

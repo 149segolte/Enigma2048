@@ -24,19 +24,23 @@ public class MainActivity extends AppCompatActivity {
 
         dataStore = new RxDataStoreBuilder<RuntimeState>(this, /* fileName= */ "state.pb", new RuntimeStateSerializer()).build();
         viewModel = new ViewModelProvider(this).get(RuntimeStateViewModel.class);
-        viewModel.setValue(dataStore.data().blockingFirst());
         viewModel.getValue().observe(this, item -> {
-            Single<RuntimeState> updateResult =
-                    dataStore.updateDataAsync(currentState ->
-                            Single.just(
-                                    currentState.toBuilder()
-                                            .setScore(item.getScore())
-                                            .setTime(item.getTime())
-                                            .setMoves(item.getMoves())
-                                            .clearBoardCell()
-                                            .addAllBoardCell(item.getBoardCellList())
-                                            .build()));
+            if (item == null) {
+                viewModel.resetValue();
+            } else {
+                Single<RuntimeState> updateResult =
+                        dataStore.updateDataAsync(currentState ->
+                                Single.just(
+                                        currentState.toBuilder()
+                                                .setScore(item.getScore())
+                                                .setTime(item.getTime())
+                                                .setMoves(item.getMoves())
+                                                .clearBoardCell()
+                                                .addAllBoardCell(item.getBoardCellList())
+                                                .build()));
+            }
         });
+        viewModel.setValue(dataStore.data().blockingFirst());
 
         RuntimeState currentState = viewModel.getValue().getValue();
         if (currentState == null) {

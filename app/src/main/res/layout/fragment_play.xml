@@ -7,6 +7,8 @@
     tools:context=".PlayFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/main_base_view"
+        android:animateLayoutChanges="true"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -25,40 +27,68 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
+        <androidx.constraintlayout.widget.Group
+            android:id="@+id/score_board"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            app:constraint_referenced_ids="moves_label,x,time_label,y"
+            app:layout_constraintBottom_toTopOf="@id/board"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/score" />
+
+        <TextView
+            android:id="@+id/moves_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Moves:"
+            app:layout_constraintBottom_toBottomOf="@id/score_board"
+            app:layout_constraintStart_toStartOf="@id/score_board"
+            app:layout_constraintTop_toTopOf="@id/score_board"
+            app:layout_constraintEnd_toStartOf="@id/x"/>
+
         <TextView
             android:id="@+id/x"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:fontFamily="@font/jetbrains_mono_bold"
             android:text="48"
-            android:textColor="?attr/colorTertiary"
-            android:textSize="24sp"
-            app:layout_constraintEnd_toStartOf="@id/y"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/score" />
+            app:layout_constraintStart_toEndOf="@id/moves_label"
+            app:layout_constraintTop_toTopOf="@id/score_board"
+            app:layout_constraintBottom_toBottomOf="@id/score_board"
+            app:layout_constraintEnd_toStartOf="@id/time_label" />
+
+        <TextView
+            android:id="@+id/time_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Time:"
+            app:layout_constraintBottom_toBottomOf="@id/score_board"
+            app:layout_constraintStart_toEndOf="@id/x"
+            app:layout_constraintTop_toTopOf="@id/score_board"
+            app:layout_constraintEnd_toStartOf="@id/y"/>
 
         <TextView
             android:id="@+id/y"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:fontFamily="@font/jetbrains_mono_bold"
             android:text="420"
-            android:textColor="?attr/colorTertiary"
-            android:textSize="24sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/x"
-            app:layout_constraintTop_toBottomOf="@id/score" />
-
+            app:layout_constraintStart_toEndOf="@id/time_label"
+            app:layout_constraintTop_toTopOf="@id/score_board"
+            app:layout_constraintBottom_toBottomOf="@id/score_board"
+            app:layout_constraintEnd_toEndOf="@id/score_board" />
         <TableLayout
             android:id="@+id/board"
-            android:layout_width="360dp"
-            android:layout_height="360dp"
-            android:layout_marginTop="32dp"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginStart="32dp"
+            android:layout_marginTop="64dp"
+            android:layout_marginEnd="32dp"
             android:background="@drawable/board"
+            app:layout_constraintDimensionRatio="w,1:1"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/y">
+            app:layout_constraintTop_toBottomOf="@id/score_board" />
 
-        </TableLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </FrameLayout>
