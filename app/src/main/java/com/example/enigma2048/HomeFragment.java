@@ -5,9 +5,7 @@ import android.view.View;
 import android.widget.Button;
 
 import androidx.activity.OnBackPressedCallback;
-import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentResultListener;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.transition.TransitionInflater;
 
@@ -29,22 +27,6 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         TransitionInflater inflater = TransitionInflater.from(requireContext());
         setEnterTransition(inflater.inflateTransition(R.transition.fade_home));
         setExitTransition(inflater.inflateTransition(R.transition.fade_home));
-
-        getParentFragmentManager().setFragmentResultListener("status", this, new FragmentResultListener() {
-            @Override
-            public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
-                previous_game = result.getBoolean("previous_game");
-                Button playButton = getActivity().findViewById(R.id.play_button);
-                Button newGameButton = getActivity().findViewById(R.id.new_game_button);
-                if (previous_game) {
-                    playButton.setText("Continue");
-                    newGameButton.setVisibility(View.VISIBLE);
-                } else {
-                    playButton.setText("New Game");
-                    newGameButton.setVisibility(View.GONE);
-                }
-            }
-        });
 
         // This callback will only be called when the Fragment is at least Started.
         OnBackPressedCallback callback = new OnBackPressedCallback(true /* enabled by default */) {
@@ -69,11 +51,19 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         super.onViewCreated(view, savedInstanceState);
 
         viewModel = new ViewModelProvider(requireActivity()).get(RuntimeStateViewModel.class);
-
         Button playButton = view.findViewById(R.id.play_button);
         Button newGameButton = view.findViewById(R.id.new_game_button);
         Button leaderboardsButton = view.findViewById(R.id.leaderboards_button);
         Button exitButton = view.findViewById(R.id.exit_button);
+
+        if (viewModel.getValue().getValue().getPreviousGame()) {
+            playButton.setText("Continue");
+            newGameButton.setVisibility(View.VISIBLE);
+        } else {
+            playButton.setText("New Game");
+            newGameButton.setVisibility(View.GONE);
+        }
+
         playButton.setOnClickListener(this);
         newGameButton.setOnClickListener(this);
         leaderboardsButton.setOnClickListener(this);

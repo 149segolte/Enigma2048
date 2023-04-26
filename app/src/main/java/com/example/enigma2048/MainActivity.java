@@ -1,18 +1,17 @@
 package com.example.enigma2048;
 
+import android.os.Bundle;
+import android.widget.Toast;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.datastore.rxjava3.RxDataStore;
 import androidx.datastore.rxjava3.RxDataStoreBuilder;
 import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.ViewModelProvider;
 
-import android.os.Bundle;
-import android.widget.Toast;
-
 import com.google.android.material.appbar.MaterialToolbar;
 
 import io.reactivex.rxjava3.core.Single;
-import io.reactivex.rxjava3.disposables.Disposable;
 
 public class MainActivity extends AppCompatActivity {
     private RxDataStore<RuntimeState> dataStore;
@@ -46,10 +45,6 @@ public class MainActivity extends AppCompatActivity {
         }
 
         FragmentManager fragmentManager = getSupportFragmentManager();
-        boolean previous_game = currentState.getPreviousGame();
-        Bundle bundle = new Bundle();
-        bundle.putBoolean("previous_game", previous_game);
-        fragmentManager.setFragmentResult("status", bundle);
         fragmentManager.beginTransaction()
                 .replace(R.id.fragment_container_view, HomeFragment.class, null)
                 .commit();

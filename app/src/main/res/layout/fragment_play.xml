@@ -50,7 +50,7 @@
             app:layout_constraintTop_toBottomOf="@id/score" />
 
         <TableLayout
-            android:id="@+id/tableLayout"
+            android:id="@+id/board"
             android:layout_width="360dp"
             android:layout_height="360dp"
             android:layout_marginTop="32dp"
@@ -59,21 +59,6 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/y">
 
-            <TableRow
-                android:layout_width="match_parent"
-                android:layout_height="match_parent" />
-
-            <TableRow
-                android:layout_width="match_parent"
-                android:layout_height="match_parent" />
-
-            <TableRow
-                android:layout_width="match_parent"
-                android:layout_height="match_parent" />
-
-            <TableRow
-                android:layout_width="match_parent"
-                android:layout_height="match_parent" />
         </TableLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </FrameLayout>
