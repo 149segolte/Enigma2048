@@ -73,10 +73,5 @@ public class MainActivity extends AppCompatActivity {
             return false;
         });
     }
-    @Override
-    public boolean onTouchEvent(MotionEvent event) {
-        // Pass the touch event to the GestureDetector
-        gestureDetector.onTouchEvent(event);
-        return super.onTouchEvent(event);
-    }
+    
 }
