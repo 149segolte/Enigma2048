@@ -21,7 +21,7 @@ public class PlayFragment extends Fragment {
     private TextView moves;
     private TextView time;
     private TableLayout board;
-    public RuntimeState state;
+    private int[] boardCache;
 
     public PlayFragment() {
         super(R.layout.fragment_play);
@@ -53,17 +53,61 @@ public class PlayFragment extends Fragment {
     public void onViewCreated(android.view.View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        viewModel = new ViewModelProvider(requireActivity()).get(RuntimeStateViewModel.class);
-        viewModel.observe(getViewLifecycleOwner(), state -> {
-            if (state != null) {
-                this.state = state;
-            }
-        });
-
         score = view.findViewById(R.id.score);
         moves = view.findViewById(R.id.x);
         time = view.findViewById(R.id.y);
         board = view.findViewById(R.id.board);
+
+        viewModel = new ViewModelProvider(requireActivity()).get(RuntimeStateViewModel.class);
+        viewModel.observe(getViewLifecycleOwner(), state -> {
+            score.setText(String.valueOf(state.getScore()));
+            moves.setText(String.valueOf(state.getMoves()));
+            time.setText(String.valueOf(state.getTime()));
+
+            int[] array = new int[state.getBoardCellCount()];
+            for(int i = 0; i < array.length; i++) array[i] = state.getBoardCell(i);
+            if (boardCache != null && boardCache == array) {
+                return;
+            } else {
+                boardCache = array;
+            }
+            board.removeAllViews();
+
+            if (state.getBoardCellCount() == 0) {
+                RuntimeState.Builder builder = state.toBuilder();
+                for (int i = 0; i < 16; i++) {
+                    builder.addBoardCell(0);
+                }
+                viewModel.set(builder.build());
+                return;
+            } else {
+                Log.d("Board", String.valueOf(state.getBoardCellCount()));
+
+                for (int i = 0; i < 4; i++) {
+                    board.addView(new TableRow(getActivity()), new TableLayout.LayoutParams(
+                            TableLayout.LayoutParams.MATCH_PARENT,
+                            TableLayout.LayoutParams.MATCH_PARENT,
+                            1.0f
+                    ));
+                    TableRow row = (TableRow) board.getChildAt(i);
+                    for (int j = 0; j < 4; j++) {
+                        row.addView(new TextView(getActivity()), new TableRow.LayoutParams(
+                                TableRow.LayoutParams.MATCH_PARENT,
+                                TableRow.LayoutParams.MATCH_PARENT,
+                                1.0f
+                        ));
+                        TextView cell = (TextView) row.getChildAt(j);
+                        cell.setGravity(Gravity.CENTER);
+                        int value = state.getBoardCell(i * 4 + j);
+                        if (value == 0) {
+                            cell.setText(String.valueOf(value));
+                        } else {
+                            cell.setText(String.valueOf(value));
+                        }
+                    }
+                }
+            }
+        });
 
         MaterialToolbar toolbar = getActivity().findViewById(R.id.toolbar);
         toolbar.setNavigationIcon(R.drawable.baseline_arrow_back_24);
@@ -75,57 +119,6 @@ public class PlayFragment extends Fragment {
         });
         toolbar.getMenu().findItem(R.id.action_settings).setVisible(false);
 
-        initializeBoard();
-    }
-
-    public void initializeBoard() {
-        board.removeAllViews();
-        if (state == null) {
-            viewModel.resetValue();
-            state = viewModel.getValue();
-        }
-
-        viewModel.setValue(state.toBuilder().setPreviousGame(true).build());
-        Log.d("state", String.valueOf(state.getPreviousGame()));
-        Log.d("view-model", String.valueOf(viewModel.getValue().getPreviousGame()));
-
-        score.setText(String.valueOf(state.getScore()));
-        moves.setText(String.valueOf(state.getMoves()));
-        time.setText(String.valueOf(state.getTime()));
-        if (state.getBoardCellCount() == 0) {
-            RuntimeState.Builder builder = state.toBuilder();
-            for (int i = 0; i < 16; i++) {
-                builder.addBoardCell(0);
-            }
-            viewModel.setValue(builder.build());
-            state = viewModel.getValue();
-        }
-
-        Log.d("Board", String.valueOf(state.getBoardCellCount()));
-
-        for (int i = 0; i < 4; i++) {
-            board.addView(new TableRow(getActivity()), new TableLayout.LayoutParams(
-                    TableLayout.LayoutParams.MATCH_PARENT,
-                    TableLayout.LayoutParams.MATCH_PARENT,
-                    1.0f
-            ));
-            TableRow row = (TableRow) board.getChildAt(i);
-            for (int j = 0; j < 4; j++) {
-                row.addView(new TextView(getActivity()), new TableRow.LayoutParams(
-                        TableRow.LayoutParams.MATCH_PARENT,
-                        TableRow.LayoutParams.MATCH_PARENT,
-                        1.0f
-                ));
-                TextView cell = (TextView) row.getChildAt(j);
-                cell.setGravity(Gravity.CENTER);
-                int value = state.getBoardCell(i * 4 + j);
-                if (value == 0) {
-                    cell.setText("");
-                } else {
-                    cell.setText(value);
-                }
-            }
-        }
-
+        viewModel.setPreviousGame(true);
     }
 }

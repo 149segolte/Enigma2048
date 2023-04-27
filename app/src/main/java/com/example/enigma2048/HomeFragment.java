@@ -15,7 +15,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 public class HomeFragment extends Fragment implements View.OnClickListener {
     private RuntimeStateViewModel viewModel;
-    private final boolean previous_game = false;
+    private boolean previousGame = false;
 
     public HomeFragment() {
         super(R.layout.fragment_home);
@@ -51,21 +51,22 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        viewModel = new ViewModelProvider(requireActivity()).get(RuntimeStateViewModel.class);
-
         Button playButton = view.findViewById(R.id.play_button);
         Button newGameButton = view.findViewById(R.id.new_game_button);
         Button leaderboardsButton = view.findViewById(R.id.leaderboards_button);
         Button exitButton = view.findViewById(R.id.exit_button);
 
-        Log.d("HomeFragment", "onViewCreated: " + viewModel.getValue().getPreviousGame());
-        if (viewModel.getValue().getPreviousGame()) {
-            playButton.setText("Continue");
-            newGameButton.setVisibility(View.VISIBLE);
-        } else {
-            playButton.setText("New Game");
-            newGameButton.setVisibility(View.GONE);
-        }
+        viewModel = new ViewModelProvider(requireActivity()).get(RuntimeStateViewModel.class);
+        viewModel.observe(getViewLifecycleOwner(), (state) -> {
+            previousGame = state.getPreviousGame();
+            if (previousGame) {
+                playButton.setText("Continue");
+                newGameButton.setVisibility(View.VISIBLE);
+            } else {
+                playButton.setText("New Game");
+                newGameButton.setVisibility(View.GONE);
+            }
+        });
 
         playButton.setOnClickListener(this);
         newGameButton.setOnClickListener(this);
@@ -82,12 +83,12 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onClick(View view) {
         int id = view.getId();
-        if (id == R.id.play_button && previous_game) {
+        if (id == R.id.play_button && previousGame) {
             getParentFragmentManager().beginTransaction()
                     .replace(R.id.fragment_container_view, PlayFragment.class, null)
                     .commit();
         } else if (id == R.id.new_game_button || id == R.id.play_button) {
-            viewModel.resetValue();
+            viewModel.set(RuntimeState.getDefaultInstance());
             getParentFragmentManager().beginTransaction()
                     .replace(R.id.fragment_container_view, PlayFragment.class, null)
                     .commit();
