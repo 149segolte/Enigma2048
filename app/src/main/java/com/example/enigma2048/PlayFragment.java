@@ -60,7 +60,7 @@ public class PlayFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         viewModel = new ViewModelProvider(requireActivity()).get(RuntimeStateViewModel.class);
-        viewModel.getValue().observe(getViewLifecycleOwner(), state -> {
+        viewModel.observe(getViewLifecycleOwner(), state -> {
             if (state != null) {
                 this.state = state;
             }
@@ -89,8 +89,12 @@ public class PlayFragment extends Fragment {
         board.removeAllViews();
         if (state == null) {
             viewModel.resetValue();
-            state = viewModel.getValue().getValue();
+            state = viewModel.getValue();
         }
+
+        viewModel.setValue(state.toBuilder().setPreviousGame(true).build());
+        Log.d("state", String.valueOf(state.getPreviousGame()));
+        Log.d("view-model", String.valueOf(viewModel.getValue().getPreviousGame()));
 
         score.setText(String.valueOf(state.getScore()));
         moves.setText(String.valueOf(state.getMoves()));
@@ -101,7 +105,7 @@ public class PlayFragment extends Fragment {
                 builder.addBoardCell(0);
             }
             viewModel.setValue(builder.build());
-            state = viewModel.getValue().getValue();
+            state = viewModel.getValue();
         }
 
         Log.d("Board", String.valueOf(state.getBoardCellCount()));

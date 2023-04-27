@@ -1,6 +1,7 @@
 package com.example.enigma2048;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
@@ -56,7 +57,8 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         Button leaderboardsButton = view.findViewById(R.id.leaderboards_button);
         Button exitButton = view.findViewById(R.id.exit_button);
 
-        if (viewModel.getValue().getValue().getPreviousGame()) {
+        Log.d("HomeFragment", "onViewCreated: " + viewModel.getValue().getPreviousGame());
+        if (viewModel.getValue().getPreviousGame()) {
             playButton.setText("Continue");
             newGameButton.setVisibility(View.VISIBLE);
         } else {
