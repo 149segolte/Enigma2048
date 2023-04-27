@@ -1,9 +1,5 @@
 package com.example.enigma2048;
 
-import android.os.Bundle;
-import android.util.Log;
-import android.widget.Toast;
-
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.datastore.rxjava3.RxDataStore;
 import androidx.datastore.rxjava3.RxDataStoreBuilder;

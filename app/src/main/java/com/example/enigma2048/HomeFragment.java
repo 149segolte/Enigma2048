@@ -52,6 +52,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         super.onViewCreated(view, savedInstanceState);
 
         viewModel = new ViewModelProvider(requireActivity()).get(RuntimeStateViewModel.class);
+
         Button playButton = view.findViewById(R.id.play_button);
         Button newGameButton = view.findViewById(R.id.new_game_button);
         Button leaderboardsButton = view.findViewById(R.id.leaderboards_button);
