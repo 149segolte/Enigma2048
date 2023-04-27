@@ -19,8 +19,6 @@ public class MainActivity extends AppCompatActivity {
     private RuntimeStateViewModel viewModel = new RuntimeStateViewModel();
 
     private GestureDetector gestureDetector;
-    private ImageView imageView;
-    private float initialX, initialY;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,5 +71,7 @@ public class MainActivity extends AppCompatActivity {
             return false;
         });
     }
-    
+    private class MyGestureListener extends GestureDetector.SimpleOnGestureListener {
+
+    }
 }
