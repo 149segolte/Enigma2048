@@ -6,6 +6,7 @@ import android.view.Gravity;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
+import androidx.view.GestureDetectorCompact;
 
 import androidx.activity.OnBackPressedCallback;
 import androidx.fragment.app.Fragment;
@@ -22,6 +23,7 @@ public class PlayFragment extends Fragment {
     private TextView time;
     private TableLayout board;
     private int[] boardCache;
+    private GestureDetector gestureDetector;
 
     public PlayFragment() {
         super(R.layout.fragment_play);
@@ -30,6 +32,8 @@ public class PlayFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        gestureDetector = new GestureDetector(this, new MyGestureListener());
 
         TransitionInflater inflater = TransitionInflater.from(requireContext());
         setEnterTransition(inflater.inflateTransition(R.transition.fade));
@@ -48,6 +52,49 @@ public class PlayFragment extends Fragment {
         requireActivity().getOnBackPressedDispatcher().addCallback(this, callback);
     }
 
+    private class MyGestureListener extends GestureDetector.SimpleOnGestureListener {
+
+        private static final int SWIPE_THRESHOLD = 100;
+        private static final int SWIPE_VELOCITY_THRESHOLD = 100;
+
+        @Override
+        public boolean onFling(MotionEvent event1, MotionEvent event2, float velocityX, float velocityY) {
+            float diffX = event2.getX() - event1.getX();
+            float diffY = event2.getY() - event1.getY();
+
+            // Check for a right swipe
+            if (Math.abs(diffX) > SWIPE_THRESHOLD && Math.abs(velocityX) > SWIPE_VELOCITY_THRESHOLD) {
+                if (diffX > 0) {
+                    // Swipe right detected
+                    Toast.makeText(MainActivity.this, "Swipe right detected", Toast.LENGTH_SHORT).show();
+                    moveImageToRight();
+                    return true;
+                } else {
+                    // Swipe left detected
+                    Toast.makeText(MainActivity.this, "Swipe left detected", Toast.LENGTH_SHORT).show();
+                    moveImageToLeft();
+                    return true;
+                }
+            }
+
+            // Check for a down swipe
+            if (Math.abs(diffY) > SWIPE_THRESHOLD && Math.abs(velocityY) > SWIPE_VELOCITY_THRESHOLD) {
+                if (diffY > 0) {
+                    // Swipe down detected
+                    Toast.makeText(MainActivity.this, "Swipe down detected", Toast.LENGTH_SHORT).show();
+                    moveImageToBottom();
+                    return true;
+                } else {
+                    // Swipe up detected
+                    Toast.makeText(MainActivity.this, "Swipe up detected", Toast.LENGTH_SHORT).show();
+                    moveImageToTop();
+                    return true;
+                }
+            }
+
+            return false;
+        }
+    }
 
     @Override
     public void onViewCreated(android.view.View view, Bundle savedInstanceState) {
