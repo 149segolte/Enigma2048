@@ -204,4 +204,31 @@ public void swipeUp()
     }
     viewModel.setBoard(a);
 }
+public void swipeDown()
+{
+    List<Integer> a = viewModel.get().getBoardCellList(); // list of integers in java
+    for (int i = 0; i < 4; i++)
+    {
+        for (int j = 15 - i; j > 3 + i; j -= 4)
+        {
+            if (a.get(j) == a.get(j-4) && a.get(j) != 0)
+            {
+                a.set(j, a.get(j) * 2);
+                a.set(j-4, 0);
+            }
+        }
+    }
+    for (int i = 0; i < 4; i++)
+    {
+        for (int j = 15 - i; j > 3 + i; j -= 4)
+        {
+            if (a.get(j) == 0 && a.get(j-4) != 0)
+            {
+                a.set(j, a.get(j-4));
+                a.set(j-4, 0);
+            }
+        }
+    }
+    viewModel.setBoard(a);
+}
 }
