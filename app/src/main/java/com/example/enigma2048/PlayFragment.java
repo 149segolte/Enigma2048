@@ -150,4 +150,31 @@ public class PlayFragment extends Fragment {
         viewModel.setBoard(a);
     }
 
+public void swipeLeft()
+{
+    List<Integer> a = viewModel.get().getBoardCellList(); // list of integers in java
+    for (int i = 0; i < 16; i += 4)
+    {
+        for (int j = i; j < i + 3; j++)
+        {
+            if (a.get(j) == a.get(j+1) && a.get(j) != 0)
+            {
+                a.set(j, a.get(j) * 2);
+                a.set(j+1, 0);
+            }
+        }
+    }
+    for (int i = 0; i < 16; i += 4)
+    {
+        for (int j = i; j < i + 3; j++)
+        {
+            if (a.get(j) == 0 && a.get(j+1) != 0)
+            {
+                a.set(j, a.get(j+1));
+                a.set(j+1, 0);
+            }
+        }
+    }
+    viewModel.setBoard(a);
+}
 }
