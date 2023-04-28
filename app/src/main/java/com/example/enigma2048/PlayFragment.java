@@ -121,4 +121,33 @@ public class PlayFragment extends Fragment {
 
         viewModel.setPreviousGame(true);
     }
+
+    public void swipeRight()
+    {
+        List<Integer> a=viewModel.get().getBoardCellList(); //list of integers in java
+        for(int i=0;i<16;i=i+4)
+        {
+            for(int j=i+3; j>i+1; j--)
+            {
+                if(a.get(j)==a.get(j-1)
+                {
+                    a.get(j)+=a.get(j-1);
+                    a.get(j-1)=0;
+                }
+            }
+        }
+        for(int i=0;i<16;i=i+4)
+        {
+            for(int j=i+3; j>i+1; j--)
+            {
+                if(a.get(j)==0 && a.get(j-1)!=0)
+                {
+                    a.get(j)+=a.get(j-1);
+                    a.get(j-1)=0;
+                }
+            }
+        }
+        viewModel.setBoard(a);
+    }
+
 }
