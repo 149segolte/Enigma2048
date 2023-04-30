@@ -23,7 +23,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        dataStore = new RxDataStoreBuilder<>(this, "state.pb", new RuntimeStateSerializer()).build();
+        dataStore = new RxDataStoreBuilder<RuntimeState>(this, /* fileName= */ "state.pb", new RuntimeStateSerializer()).build();
         viewModel = new ViewModelProvider(this).get(RuntimeStateViewModel.class);
         viewModel.set(dataStore.data().blockingFirst());
         viewModel.observe(this, state -> {
