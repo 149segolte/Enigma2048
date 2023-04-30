@@ -135,9 +135,7 @@ public class PlayFragment extends Fragment {
 
     private static class MyGestureListener extends GestureDetector.SimpleOnGestureListener {
 
-        private static final int SWIPE_THRESHOLD = 100;
-        private static final int SWIPE_VELOCITY_THRESHOLD = 100;
-
+        private static final int SWIPE_THRESHOLD = 150;
         @Override
         public boolean onDown(MotionEvent event) {
             return true;
@@ -145,11 +143,9 @@ public class PlayFragment extends Fragment {
 
         @Override
         public boolean onFling(MotionEvent event1, MotionEvent event2, float velocityX, float velocityY) {
-            int SWIPE_THRESHOLD = 150;
+            
             float diffY = event2.getY() - event1.getY();
             float diffX = event2.getX() - event1.getX();
-            float distance = (float) Math.sqrt(diffX * diffX + diffY * diffY);
-            float slope = Math.abs(diffY / diffX);
             float angle = (float) Math.atan2(diffY, diffX) * 180 / (float) Math.PI;
 
             if (distance > SWIPE_THRESHOLD) {
