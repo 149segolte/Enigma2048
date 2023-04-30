@@ -145,35 +145,28 @@ public class PlayFragment extends Fragment {
 
         @Override
         public boolean onFling(MotionEvent event1, MotionEvent event2, float velocityX, float velocityY) {
-            float diffX = event2.getX() - event1.getX();
+            int SWIPE_THRESHOLD = 150;
             float diffY = event2.getY() - event1.getY();
-            Log.d("Swipe", "diffX: " + diffX + " diffY: " + diffY);
+            float diffX = event2.getX() - event1.getX();
+            float distance = (float) Math.sqrt(diffX * diffX + diffY * diffY);
+            float slope = Math.abs(diffY / diffX);
+            float angle = (float) Math.atan2(diffY, diffX) * 180 / (float) Math.PI;
 
-            // Check for a right swipe
-            if (Math.abs(diffX) > SWIPE_THRESHOLD && Math.abs(velocityX) > SWIPE_VELOCITY_THRESHOLD) {
-                if (diffX > 0) {
-                    // Swipe right detected
-                    Log.d("Swipe", "right");
-                } else {
-                    // Swipe left detected
-                    Log.d("Swipe", "left");
+            if (distance > SWIPE_THRESHOLD) {
+                if (angle > -45 && angle <= 60) {
+                    Log.d("Swipe", "Right");
                 }
-                return true;
-            }
-
-            // Check for a down swipe
-            if (Math.abs(diffY) > SWIPE_THRESHOLD && Math.abs(velocityY) > SWIPE_VELOCITY_THRESHOLD) {
-                if (diffY > 0) {
-                    // Swipe down detected
-                    Log.d("Swipe", "down");
-                } else {
-                    // Swipe up detected
-                    Log.d("Swipe", "up");
+                if (angle > 60 && angle <= 120) {
+                    Log.d("Swipe", "Down");
                 }
-                return true;
+                if (angle > 120 || angle <= -120) {
+                    Log.d("Swipe", "Left");
+                }
+                if (angle > -120 && angle <= -45) {
+                    Log.d("Swipe", "Up");
+                }
             }
-
-            return false;
+            return true;
         }
     }
 }
