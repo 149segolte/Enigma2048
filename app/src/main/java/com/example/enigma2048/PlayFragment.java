@@ -147,6 +147,7 @@ public class PlayFragment extends Fragment {
             float diffY = event2.getY() - event1.getY();
             float diffX = event2.getX() - event1.getX();
             float angle = (float) Math.atan2(diffY, diffX) * 180 / (float) Math.PI;
+            float distance = (float) Math.sqrt(diffX * diffX + diffY * diffY);
 
             if (distance > SWIPE_THRESHOLD) {
                 if (angle > -45 && angle <= 60) {
