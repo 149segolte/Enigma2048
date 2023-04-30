@@ -2,12 +2,15 @@ package com.example.enigma2048;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.view.GestureDetector;
 import android.view.Gravity;
+import android.view.MotionEvent;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
-import androidx.view.GestureDetectorCompact;
+import android.widget.Toast;
 
+import androidx.core.view.GestureDetectorCompat;
 import androidx.activity.OnBackPressedCallback;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
@@ -23,7 +26,7 @@ public class PlayFragment extends Fragment {
     private TextView time;
     private TableLayout board;
     private int[] boardCache;
-    private GestureDetector gestureDetector;
+    private GestureDetectorCompat gestureDetector;
 
     public PlayFragment() {
         super(R.layout.fragment_play);
@@ -33,7 +36,7 @@ public class PlayFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        gestureDetector = new GestureDetector(this, new MyGestureListener());
+        gestureDetector = new GestureDetectorCompat(getContext(), new MyGestureListener());
 
         TransitionInflater inflater = TransitionInflater.from(requireContext());
         setEnterTransition(inflater.inflateTransition(R.transition.fade));
@@ -50,50 +53,6 @@ public class PlayFragment extends Fragment {
             }
         };
         requireActivity().getOnBackPressedDispatcher().addCallback(this, callback);
-    }
-
-    private class MyGestureListener extends GestureDetector.SimpleOnGestureListener {
-
-        private static final int SWIPE_THRESHOLD = 100;
-        private static final int SWIPE_VELOCITY_THRESHOLD = 100;
-
-        @Override
-        public boolean onFling(MotionEvent event1, MotionEvent event2, float velocityX, float velocityY) {
-            float diffX = event2.getX() - event1.getX();
-            float diffY = event2.getY() - event1.getY();
-
-            // Check for a right swipe
-            if (Math.abs(diffX) > SWIPE_THRESHOLD && Math.abs(velocityX) > SWIPE_VELOCITY_THRESHOLD) {
-                if (diffX > 0) {
-                    // Swipe right detected
-                    Toast.makeText(MainActivity.this, "Swipe right detected", Toast.LENGTH_SHORT).show();
-                    moveImageToRight();
-                    return true;
-                } else {
-                    // Swipe left detected
-                    Toast.makeText(MainActivity.this, "Swipe left detected", Toast.LENGTH_SHORT).show();
-                    moveImageToLeft();
-                    return true;
-                }
-            }
-
-            // Check for a down swipe
-            if (Math.abs(diffY) > SWIPE_THRESHOLD && Math.abs(velocityY) > SWIPE_VELOCITY_THRESHOLD) {
-                if (diffY > 0) {
-                    // Swipe down detected
-                    Toast.makeText(MainActivity.this, "Swipe down detected", Toast.LENGTH_SHORT).show();
-                    moveImageToBottom();
-                    return true;
-                } else {
-                    // Swipe up detected
-                    Toast.makeText(MainActivity.this, "Swipe up detected", Toast.LENGTH_SHORT).show();
-                    moveImageToTop();
-                    return true;
-                }
-            }
-
-            return false;
-        }
     }
 
     @Override
@@ -156,6 +115,11 @@ public class PlayFragment extends Fragment {
             }
         });
 
+        board.setOnTouchListener((v, event) -> {
+            gestureDetector.onTouchEvent(event);
+            return true;
+        });
+
         MaterialToolbar toolbar = getActivity().findViewById(R.id.toolbar);
         toolbar.setNavigationIcon(R.drawable.baseline_arrow_back_24);
         toolbar.setNavigationOnClickListener(v -> {
@@ -167,5 +131,49 @@ public class PlayFragment extends Fragment {
         toolbar.getMenu().findItem(R.id.action_settings).setVisible(false);
 
         viewModel.setPreviousGame(true);
+    }
+
+    private static class MyGestureListener extends GestureDetector.SimpleOnGestureListener {
+
+        private static final int SWIPE_THRESHOLD = 100;
+        private static final int SWIPE_VELOCITY_THRESHOLD = 100;
+
+        @Override
+        public boolean onDown(MotionEvent event) {
+            return true;
+        }
+
+        @Override
+        public boolean onFling(MotionEvent event1, MotionEvent event2, float velocityX, float velocityY) {
+            float diffX = event2.getX() - event1.getX();
+            float diffY = event2.getY() - event1.getY();
+            Log.d("Swipe", "diffX: " + diffX + " diffY: " + diffY);
+
+            // Check for a right swipe
+            if (Math.abs(diffX) > SWIPE_THRESHOLD && Math.abs(velocityX) > SWIPE_VELOCITY_THRESHOLD) {
+                if (diffX > 0) {
+                    // Swipe right detected
+                    Log.d("Swipe", "right");
+                } else {
+                    // Swipe left detected
+                    Log.d("Swipe", "left");
+                }
+                return true;
+            }
+
+            // Check for a down swipe
+            if (Math.abs(diffY) > SWIPE_THRESHOLD && Math.abs(velocityY) > SWIPE_VELOCITY_THRESHOLD) {
+                if (diffY > 0) {
+                    // Swipe down detected
+                    Log.d("Swipe", "down");
+                } else {
+                    // Swipe up detected
+                    Log.d("Swipe", "up");
+                }
+                return true;
+            }
+
+            return false;
+        }
     }
 }
