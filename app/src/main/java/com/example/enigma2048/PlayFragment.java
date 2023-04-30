@@ -2,11 +2,15 @@ package com.example.enigma2048;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.view.GestureDetector;
 import android.view.Gravity;
+import android.view.MotionEvent;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import androidx.core.view.GestureDetectorCompat;
 import androidx.activity.OnBackPressedCallback;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
@@ -22,6 +26,7 @@ public class PlayFragment extends Fragment {
     private TextView time;
     private TableLayout board;
     private int[] boardCache;
+    private GestureDetectorCompat gestureDetector;
 
     public PlayFragment() {
         super(R.layout.fragment_play);
@@ -30,6 +35,8 @@ public class PlayFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        gestureDetector = new GestureDetectorCompat(getContext(), new MyGestureListener());
 
         TransitionInflater inflater = TransitionInflater.from(requireContext());
         setEnterTransition(inflater.inflateTransition(R.transition.fade));
@@ -47,7 +54,6 @@ public class PlayFragment extends Fragment {
         };
         requireActivity().getOnBackPressedDispatcher().addCallback(this, callback);
     }
-
 
     @Override
     public void onViewCreated(android.view.View view, Bundle savedInstanceState) {
@@ -109,6 +115,11 @@ public class PlayFragment extends Fragment {
             }
         });
 
+        board.setOnTouchListener((v, event) -> {
+            gestureDetector.onTouchEvent(event);
+            return true;
+        });
+
         MaterialToolbar toolbar = getActivity().findViewById(R.id.toolbar);
         toolbar.setNavigationIcon(R.drawable.baseline_arrow_back_24);
         toolbar.setNavigationOnClickListener(v -> {
@@ -120,5 +131,39 @@ public class PlayFragment extends Fragment {
         toolbar.getMenu().findItem(R.id.action_settings).setVisible(false);
 
         viewModel.setPreviousGame(true);
+    }
+
+    private static class MyGestureListener extends GestureDetector.SimpleOnGestureListener {
+
+        private static final int SWIPE_THRESHOLD = 150;
+        @Override
+        public boolean onDown(MotionEvent event) {
+            return true;
+        }
+
+        @Override
+        public boolean onFling(MotionEvent event1, MotionEvent event2, float velocityX, float velocityY) {
+            
+            float diffY = event2.getY() - event1.getY();
+            float diffX = event2.getX() - event1.getX();
+            float angle = (float) Math.atan2(diffY, diffX) * 180 / (float) Math.PI;
+            float distance = (float) Math.sqrt(diffX * diffX + diffY * diffY);
+
+            if (distance > SWIPE_THRESHOLD) {
+                if (angle > -45 && angle <= 60) {
+                    Log.d("Swipe", "Right");
+                }
+                if (angle > 60 && angle <= 120) {
+                    Log.d("Swipe", "Down");
+                }
+                if (angle > 120 || angle <= -120) {
+                    Log.d("Swipe", "Left");
+                }
+                if (angle > -120 && angle <= -45) {
+                    Log.d("Swipe", "Up");
+                }
+            }
+            return true;
+        }
     }
 }
