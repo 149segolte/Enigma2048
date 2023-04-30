@@ -19,6 +19,8 @@ import androidx.transition.TransitionInflater;
 
 import com.google.android.material.appbar.MaterialToolbar;
 
+import java.util.List;
+
 public class PlayFragment extends Fragment {
     private RuntimeStateViewModel viewModel;
     private TextView score;
@@ -165,5 +167,89 @@ public class PlayFragment extends Fragment {
             }
             return true;
         }
+    }
+
+    public void swipeRight() {
+        List<Integer> a = viewModel.get().getBoardCellList();
+        for (int i = 0; i < 16; i = i + 4) {
+            for (int j = i + 3; j > i + 1; j--) {
+                if (a.get(j) == a.get(j - 1)) {
+                    a.set(j, a.get(j) + a.get(j - 1));
+                    a.set(j - 1, 0);
+                }
+            }
+        }
+        for (int i = 0; i < 16; i = i + 4) {
+            for (int j = i + 3; j > i + 1; j--) {
+                if (a.get(j) == 0 && a.get(j - 1) != 0) {
+                    a.set(j, a.get(j) + a.get(j - 1));
+                    a.set(j - 1, 0);
+                }
+            }
+        }
+        viewModel.setBoard(a);
+    }
+
+    public void swipeLeft() {
+        List<Integer> a = viewModel.get().getBoardCellList();
+        for (int i = 0; i < 16; i += 4) {
+            for (int j = i; j < i + 3; j++) {
+                if (a.get(j) == a.get(j + 1) && a.get(j) != 0) {
+                    a.set(j, a.get(j) * 2);
+                    a.set(j + 1, 0);
+                }
+            }
+        }
+        for (int i = 0; i < 16; i += 4) {
+            for (int j = i; j < i + 3; j++) {
+                if (a.get(j) == 0 && a.get(j + 1) != 0) {
+                    a.set(j, a.get(j + 1));
+                    a.set(j + 1, 0);
+                }
+            }
+        }
+        viewModel.setBoard(a);
+    }
+
+    public void swipeUp() {
+        List<Integer> a = viewModel.get().getBoardCellList();
+        for (int i = 0; i < 4; i++) {
+            for (int j = i; j < 12 + i; j += 4) {
+                if (a.get(j) == a.get(j + 4) && a.get(j) != 0) {
+                    a.set(j, a.get(j) * 2);
+                    a.set(j + 4, 0);
+                }
+            }
+        }
+        for (int i = 0; i < 4; i++) {
+            for (int j = i; j < 12 + i; j += 4) {
+                if (a.get(j) == 0 && a.get(j + 4) != 0) {
+                    a.set(j, a.get(j + 4));
+                    a.set(j + 4, 0);
+                }
+            }
+        }
+        viewModel.setBoard(a);
+    }
+
+    public void swipeDown() {
+        List<Integer> a = viewModel.get().getBoardCellList();
+        for (int i = 0; i < 4; i++) {
+            for (int j = 15 - i; j > 3 + i; j -= 4) {
+                if (a.get(j) == a.get(j - 4) && a.get(j) != 0) {
+                    a.set(j, a.get(j) * 2);
+                    a.set(j - 4, 0);
+                }
+            }
+        }
+        for (int i = 0; i < 4; i++) {
+            for (int j = 15 - i; j > 3 + i; j -= 4) {
+                if (a.get(j) == 0 && a.get(j - 4) != 0) {
+                    a.set(j, a.get(j - 4));
+                    a.set(j - 4, 0);
+                }
+            }
+        }
+        viewModel.setBoard(a);
     }
 }

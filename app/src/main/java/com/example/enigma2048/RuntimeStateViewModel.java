@@ -6,6 +6,7 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModel;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.stream.Collectors;
 
 public class RuntimeStateViewModel extends ViewModel {
@@ -35,8 +36,8 @@ public class RuntimeStateViewModel extends ViewModel {
         data.setValue(data.getValue().toBuilder().setPreviousGame(previousGame).build());
     }
 
-    public void setBoard(int[] board) {
-        data.setValue(data.getValue().toBuilder().clearBoardCell().addAllBoardCell(Arrays.stream(board).boxed().collect(Collectors.toList())).build());
+    public void setBoard(List<Integer> board) {
+        data.setValue(data.getValue().toBuilder().clearBoardCell().addAllBoardCell(board).build());
     }
 
     public RuntimeState get() {
