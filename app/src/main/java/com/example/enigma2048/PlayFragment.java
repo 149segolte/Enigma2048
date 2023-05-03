@@ -252,4 +252,23 @@ public class PlayFragment extends Fragment {
         }
         viewModel.setBoard(a);
     }
+
+    // random tile genertor
+    public void randomTile(){
+        List<Integer> a=viewModel.get().getBoardCellList();
+        int flag=0 ;
+        while(flag!=1 ){
+            int random = Random.nextInt(16);
+            if(a[random]==0){
+                //place a tile
+                int n = Random.nextInt(2);
+                if(n==1)
+                    a[random]=2;
+                else
+                    a[random]=4;
+                    flag=1;
+            }
+        }
+        viewModel.setBoard(a);
+    }
 }
