@@ -3,15 +3,15 @@ package com.example.enigma2048;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.GestureDetector;
-import android.view.Gravity;
 import android.view.MotionEvent;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import androidx.core.view.GestureDetectorCompat;
 import androidx.activity.OnBackPressedCallback;
+import androidx.core.content.ContextCompat;
+import androidx.core.graphics.ColorUtils;
+import androidx.core.view.GestureDetectorCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.ViewModelProvider;
@@ -79,7 +79,18 @@ public class PlayFragment extends Fragment {
             } else {
                 boardCache = array;
             }
-            board.removeAllViews();
+
+            if (board.getChildCount() != 4) {
+                return;
+            }
+            for (int i = 0; i < 4; i++) {
+                TableRow row = (TableRow) board.getChildAt(i);
+                for (int j = 0; j < 4; j++) {
+                    TextView cell = (TextView) row.getChildAt(j);
+                    cell.setText("");
+                    cell.setBackgroundColor(getResources().getColor(android.R.color.transparent, null));
+                }
+            }
 
             if (state.getBoardCellCount() == 0) {
                 RuntimeState.Builder builder = state.toBuilder();
@@ -90,27 +101,20 @@ public class PlayFragment extends Fragment {
                 return;
             } else {
                 Log.d("Board", String.valueOf(state.getBoardCellCount()));
-
                 for (int i = 0; i < 4; i++) {
-                    board.addView(new TableRow(getActivity()), new TableLayout.LayoutParams(
-                            TableLayout.LayoutParams.MATCH_PARENT,
-                            TableLayout.LayoutParams.MATCH_PARENT,
-                            1.0f
-                    ));
                     TableRow row = (TableRow) board.getChildAt(i);
                     for (int j = 0; j < 4; j++) {
-                        row.addView(new TextView(getActivity()), new TableRow.LayoutParams(
-                                TableRow.LayoutParams.MATCH_PARENT,
-                                TableRow.LayoutParams.MATCH_PARENT,
-                                1.0f
-                        ));
                         TextView cell = (TextView) row.getChildAt(j);
-                        cell.setGravity(Gravity.CENTER);
                         int value = state.getBoardCell(i * 4 + j);
                         if (value == 0) {
-                            cell.setText(String.valueOf(value));
+                            cell.setText("");
                         } else {
                             cell.setText(String.valueOf(value));
+                            int color_saturation = (10 - (int) (Math.log(value) / Math.log(2))) * 10;
+                            int backColor = ColorUtils.blendARGB(ContextCompat.getColor(getContext(), R.color.md_theme_light_secondary), ContextCompat.getColor(getContext(), R.color.md_theme_light_background), 1 - (float) color_saturation / 100);
+                            cell.setBackgroundColor(backColor);
+                            int textColor = ColorUtils.blendARGB(ContextCompat.getColor(getContext(), R.color.md_theme_light_onSecondary), ContextCompat.getColor(getContext(), R.color.md_theme_light_onBackground), 1 - (float) color_saturation / 100);
+                            cell.setTextColor(textColor);
                         }
                     }
                 }
