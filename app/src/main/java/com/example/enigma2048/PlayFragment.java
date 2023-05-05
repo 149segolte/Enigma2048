@@ -256,6 +256,7 @@ public class PlayFragment extends Fragment {
     // random tile genertor
     public void randomTile(){
         List<Integer> a=viewModel.get().getBoardCellList();
+        Random random = new Random();
         int flag=0 ;
         while(flag!=1 ){
             int random = Random.nextInt(16);
