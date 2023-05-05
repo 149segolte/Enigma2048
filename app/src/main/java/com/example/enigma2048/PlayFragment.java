@@ -20,6 +20,7 @@ import androidx.transition.TransitionInflater;
 import com.google.android.material.appbar.MaterialToolbar;
 
 import java.util.List;
+import java.util.Collections;
 
 public class PlayFragment extends Fragment {
     private RuntimeStateViewModel viewModel;
@@ -272,4 +273,13 @@ public class PlayFragment extends Fragment {
         }
         viewModel.setBoard(a);
     }
+    // function for check game over
+    public boolean IsGameOver(){
+        List<Integer> a=viewModel.get().getBoardCellList();
+        Collections.sort(a);
+        if(a[0]==0)
+           return true;
+       else
+           return false;
+   }
 }
