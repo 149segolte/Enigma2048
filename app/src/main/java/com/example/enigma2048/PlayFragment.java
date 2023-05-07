@@ -19,7 +19,9 @@ import androidx.transition.TransitionInflater;
 
 import com.google.android.material.appbar.MaterialToolbar;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Random;
 import java.util.stream.Collectors;
 
 public class PlayFragment extends Fragment {
@@ -174,6 +176,8 @@ public class PlayFragment extends Fragment {
                     swipeUp();
                 }
             }
+            gameOver();
+            randomTile();
             return true;
         }
     }
@@ -298,4 +302,34 @@ public class PlayFragment extends Fragment {
         }
         viewModel.setBoard(board);
     }
+
+    // random tile genertor
+    public void randomTile(){
+        List<Integer> a=viewModel.get().getBoardCellList().stream().collect(Collectors.toList());
+        Random rand = new Random();
+        int flag=0 ;
+        while(flag!=1 ){
+            int random = rand.nextInt(16);
+            if(a.get(random)==0){
+                //place a tile
+                int n = rand.nextInt(2);
+                if(n==1)
+                    a.set(random,2);
+                else
+                    a.set(random,4);
+                    flag=1;
+            }
+        }
+        viewModel.setBoard(a);
+    }
+    // function for check game over
+    public boolean gameOver(){
+        List<Integer> a=viewModel.get().getBoardCellList().stream().collect(Collectors.toList());
+        Collections.sort(a);
+        if(a.get(0)==0)
+           return true;
+       else {
+           viewModel.setPreviousGame(false);
+           return false;
+   }}
 }
