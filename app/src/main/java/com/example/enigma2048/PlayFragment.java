@@ -205,25 +205,37 @@ public class PlayFragment extends Fragment {
         
 
     public void swipeLeft() {
-        List<Integer> a = viewModel.get().getBoardCellList();
-        for (int i = 0; i < 16; i += 4) {
-            for (int j = i; j < i + 3; j++) {
-                if (a.get(j) == a.get(j + 1) && a.get(j) != 0) {
-                    a.set(j, a.get(j) * 2);
-                    a.set(j + 1, 0);
+        List<Integer> board = viewModel.get().getBoardCellList();
+        public void swipeLeft() {
+            List<Integer> board = viewModel.get().getBoardCellList();
+            for (int i = 0; i < 4; ++i) {
+                for (int j = 1; j < 4; ++j) {
+                    int index = i * 4 + j;
+                    if (board.get(index) != 0) {
+                        int k = j - 1;
+                        while (k >= 0 && board.get(i * 4 + k) == 0) {
+                            --k;
+                        }
+                        if (k >= 0 && board.get(i * 4 + k).equals(board.get(index))) {
+                            board.set(i * 4 + k, board.get(i * 4 + k) * 2);
+                            board.set(index, 0);
+                        } else {
+                            k = j - 1;
+                            while (k >= 0 && board.get(i * 4 + k) == 0) {
+                                --k;
+                            }
+                            ++k;
+                            if (k != j) {
+                                board.set(i * 4 + k, board.get(index));
+                                board.set(index, 0);
+                            }
+                        }
+                    }
                 }
             }
+            viewModel.setBoard(board);
         }
-        for (int i = 0; i < 16; i += 4) {
-            for (int j = i; j < i + 3; j++) {
-                if (a.get(j) == 0 && a.get(j + 1) != 0) {
-                    a.set(j, a.get(j + 1));
-                    a.set(j + 1, 0);
-                }
-            }
-        }
-        viewModel.setBoard(a);
-    }
+        
 
     public void swipeUp() {
         List<Integer> a = viewModel.get().getBoardCellList();
