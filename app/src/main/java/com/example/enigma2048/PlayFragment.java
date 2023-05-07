@@ -264,24 +264,34 @@ public class PlayFragment extends Fragment {
             viewModel.setBoard(board);
         }
         
-    public void swipeDown() {
-        List<Integer> a = viewModel.get().getBoardCellList();
-        for (int i = 0; i < 4; i++) {
-            for (int j = 15 - i; j > 3 + i; j -= 4) {
-                if (a.get(j) == a.get(j - 4) && a.get(j) != 0) {
-                    a.set(j, a.get(j) * 2);
-                    a.set(j - 4, 0);
+        public void swipeDown() {
+            List<Integer> board = viewModel.get().getBoardCellList();
+            for (int j = 0; j < 4; ++j) {
+                for (int i = 2; i >= 0; --i) {
+                    int index = i * 4 + j;
+                    if (board.get(index) != 0) {
+                        int k = i + 1;
+                        while (k < 4 && board.get(k * 4 + j) == 0) {
+                            ++k;
+                        }
+                        if (k < 4 && board.get(k * 4 + j).equals(board.get(index))) {
+                            board.set(k * 4 + j, board.get(k * 4 + j) * 2);
+                            board.set(index, 0);
+                        } else {
+                            k = i + 1;
+                            while (k < 4 && board.get(k * 4 + j) == 0) {
+                                ++k;
+                            }
+                            --k;
+                            if (k != i) {
+                                board.set(k * 4 + j, board.get(index));
+                                board.set(index, 0);
+                            }
+                        }
+                    }
                 }
             }
+            viewModel.setBoard(board);
         }
-        for (int i = 0; i < 4; i++) {
-            for (int j = 15 - i; j > 3 + i; j -= 4) {
-                if (a.get(j) == 0 && a.get(j - 4) != 0) {
-                    a.set(j, a.get(j - 4));
-                    a.set(j - 4, 0);
-                }
-            }
-        }
-        viewModel.setBoard(a);
-    }
+        
 }
