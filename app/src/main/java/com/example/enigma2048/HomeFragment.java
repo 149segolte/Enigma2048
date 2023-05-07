@@ -1,7 +1,6 @@
 package com.example.enigma2048;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
@@ -12,6 +11,9 @@ import androidx.transition.TransitionInflater;
 
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+
+import java.util.Arrays;
+import java.util.stream.Collectors;
 
 public class HomeFragment extends Fragment implements View.OnClickListener {
     private RuntimeStateViewModel viewModel;
@@ -89,6 +91,14 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
                     .commit();
         } else if (id == R.id.new_game_button || id == R.id.play_button) {
             viewModel.set(RuntimeState.getDefaultInstance());
+            int[] board = new int[16];
+            for (int i = 0; i < 16; i++) {
+                board[i] = 0;
+            }
+            board[0] = 2;
+            board[5] = 2;
+            board[11] = 4;
+            viewModel.setBoard(Arrays.stream(board).boxed().collect(Collectors.toList()));
             getParentFragmentManager().beginTransaction()
                     .replace(R.id.fragment_container_view, PlayFragment.class, null)
                     .commit();
