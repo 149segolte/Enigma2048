@@ -20,6 +20,7 @@ import androidx.transition.TransitionInflater;
 import com.google.android.material.appbar.MaterialToolbar;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class PlayFragment extends Fragment {
     private RuntimeStateViewModel viewModel;
@@ -139,7 +140,7 @@ public class PlayFragment extends Fragment {
         viewModel.setPreviousGame(true);
     }
 
-    private static class MyGestureListener extends GestureDetector.SimpleOnGestureListener {
+    private class MyGestureListener extends GestureDetector.SimpleOnGestureListener {
 
         private static final int SWIPE_THRESHOLD = 150;
         @Override
@@ -158,15 +159,19 @@ public class PlayFragment extends Fragment {
             if (distance > SWIPE_THRESHOLD) {
                 if (angle > -45 && angle <= 60) {
                     Log.d("Swipe", "Right");
+                    swipeRight();
                 }
                 if (angle > 60 && angle <= 120) {
                     Log.d("Swipe", "Down");
+                    swipeDown();
                 }
                 if (angle > 120 || angle <= -120) {
                     Log.d("Swipe", "Left");
+                    swipeLeft();
                 }
                 if (angle > -120 && angle <= -45) {
                     Log.d("Swipe", "Up");
+                    swipeUp();
                 }
             }
             return true;
@@ -174,86 +179,123 @@ public class PlayFragment extends Fragment {
     }
 
     public void swipeRight() {
-        List<Integer> a = viewModel.get().getBoardCellList();
-        for (int i = 0; i < 16; i = i + 4) {
-            for (int j = i + 3; j > i + 1; j--) {
-                if (a.get(j) == a.get(j - 1)) {
-                    a.set(j, a.get(j) + a.get(j - 1));
-                    a.set(j - 1, 0);
+        List<Integer> board = viewModel.get().getBoardCellList().stream().collect(Collectors.toList());
+        for (int i = 0; i < 4; ++i) {
+            for (int j = 2; j >= 0; --j) {
+                int index = i * 4 + j;
+                if (board.get(index) != 0) {
+                    int k = j + 1;
+                    while (k < 4 && board.get(i * 4 + k) == 0) {
+                        ++k;
+                    }
+                    if (k < 4 && board.get(i * 4 + k).equals(board.get(index))) {
+                        board.set(i * 4 + k, board.get(i * 4 + k) * 2);
+                        board.set(index, 0);
+                    } else {
+                        k = j + 1;
+                        while (k < 4 && board.get(i * 4 + k) == 0) {
+                            ++k;
+                        }
+                        --k;
+                        if (k != j) {
+                            board.set(i * 4 + k, board.get(index));
+                            board.set(index, 0);
+                        }
+                    }
                 }
             }
         }
-        for (int i = 0; i < 16; i = i + 4) {
-            for (int j = i + 3; j > i + 1; j--) {
-                if (a.get(j) == 0 && a.get(j - 1) != 0) {
-                    a.set(j, a.get(j) + a.get(j - 1));
-                    a.set(j - 1, 0);
-                }
-            }
-        }
-        viewModel.setBoard(a);
+        viewModel.setBoard(board);
     }
 
     public void swipeLeft() {
-        List<Integer> a = viewModel.get().getBoardCellList();
-        for (int i = 0; i < 16; i += 4) {
-            for (int j = i; j < i + 3; j++) {
-                if (a.get(j) == a.get(j + 1) && a.get(j) != 0) {
-                    a.set(j, a.get(j) * 2);
-                    a.set(j + 1, 0);
+        List<Integer> board = viewModel.get().getBoardCellList().stream().collect(Collectors.toList());
+        for (int i = 0; i < 4; ++i) {
+            for (int j = 1; j < 4; ++j) {
+                int index = i * 4 + j;
+                if (board.get(index) != 0) {
+                    int k = j - 1;
+                    while (k >= 0 && board.get(i * 4 + k) == 0) {
+                        --k;
+                    }
+                    if (k >= 0 && board.get(i * 4 + k).equals(board.get(index))) {
+                        board.set(i * 4 + k, board.get(i * 4 + k) * 2);
+                        board.set(index, 0);
+                    } else {
+                        k = j - 1;
+                        while (k >= 0 && board.get(i * 4 + k) == 0) {
+                            --k;
+                        }
+                        ++k;
+                        if (k != j) {
+                            board.set(i * 4 + k, board.get(index));
+                            board.set(index, 0);
+                        }
+                    }
                 }
             }
         }
-        for (int i = 0; i < 16; i += 4) {
-            for (int j = i; j < i + 3; j++) {
-                if (a.get(j) == 0 && a.get(j + 1) != 0) {
-                    a.set(j, a.get(j + 1));
-                    a.set(j + 1, 0);
-                }
-            }
-        }
-        viewModel.setBoard(a);
+        viewModel.setBoard(board);
     }
 
+
     public void swipeUp() {
-        List<Integer> a = viewModel.get().getBoardCellList();
-        for (int i = 0; i < 4; i++) {
-            for (int j = i; j < 12 + i; j += 4) {
-                if (a.get(j) == a.get(j + 4) && a.get(j) != 0) {
-                    a.set(j, a.get(j) * 2);
-                    a.set(j + 4, 0);
+        List<Integer> board = viewModel.get().getBoardCellList().stream().collect(Collectors.toList());
+        for (int j = 0; j < 4; ++j) {
+            for (int i = 1; i < 4; ++i) {
+                int index = i * 4 + j;
+                if (board.get(index) != 0) {
+                    int k = i - 1;
+                    while (k >= 0 && board.get(k * 4 + j) == 0) {
+                        --k;
+                    }
+                    if (k >= 0 && board.get(k * 4 + j).equals(board.get(index))) {
+                        board.set(k * 4 + j, board.get(k * 4 + j) * 2);
+                        board.set(index, 0);
+                    } else {
+                        k = i - 1;
+                        while (k >= 0 && board.get(k * 4 + j) == 0) {
+                            --k;
+                        }
+                        ++k;
+                        if (k != i) {
+                            board.set(k * 4 + j, board.get(index));
+                            board.set(index, 0);
+                        }
+                    }
                 }
             }
         }
-        for (int i = 0; i < 4; i++) {
-            for (int j = i; j < 12 + i; j += 4) {
-                if (a.get(j) == 0 && a.get(j + 4) != 0) {
-                    a.set(j, a.get(j + 4));
-                    a.set(j + 4, 0);
-                }
-            }
-        }
-        viewModel.setBoard(a);
+        viewModel.setBoard(board);
     }
 
     public void swipeDown() {
-        List<Integer> a = viewModel.get().getBoardCellList();
-        for (int i = 0; i < 4; i++) {
-            for (int j = 15 - i; j > 3 + i; j -= 4) {
-                if (a.get(j) == a.get(j - 4) && a.get(j) != 0) {
-                    a.set(j, a.get(j) * 2);
-                    a.set(j - 4, 0);
+        List<Integer> board = viewModel.get().getBoardCellList().stream().collect(Collectors.toList());
+        for (int j = 0; j < 4; ++j) {
+            for (int i = 2; i >= 0; --i) {
+                int index = i * 4 + j;
+                if (board.get(index) != 0) {
+                    int k = i + 1;
+                    while (k < 4 && board.get(k * 4 + j) == 0) {
+                        ++k;
+                    }
+                    if (k < 4 && board.get(k * 4 + j).equals(board.get(index))) {
+                        board.set(k * 4 + j, board.get(k * 4 + j) * 2);
+                        board.set(index, 0);
+                    } else {
+                        k = i + 1;
+                        while (k < 4 && board.get(k * 4 + j) == 0) {
+                            ++k;
+                        }
+                        --k;
+                        if (k != i) {
+                            board.set(k * 4 + j, board.get(index));
+                            board.set(index, 0);
+                        }
+                    }
                 }
             }
         }
-        for (int i = 0; i < 4; i++) {
-            for (int j = 15 - i; j > 3 + i; j -= 4) {
-                if (a.get(j) == 0 && a.get(j - 4) != 0) {
-                    a.set(j, a.get(j - 4));
-                    a.set(j - 4, 0);
-                }
-            }
-        }
-        viewModel.setBoard(a);
+        viewModel.setBoard(board);
     }
 }
