@@ -12,6 +12,9 @@ import androidx.transition.TransitionInflater;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
+import java.util.Arrays;
+import java.util.stream.Collectors;
+
 public class HomeFragment extends Fragment implements View.OnClickListener {
     private RuntimeStateViewModel viewModel;
     private boolean previousGame = false;
@@ -95,7 +98,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
             board[0] = 2;
             board[5] = 2;
             board[11] = 4;
-            viewModel.setBoard(board);
+            viewModel.setBoard(Arrays.stream(board).boxed().collect(Collectors.toList()));
             getParentFragmentManager().beginTransaction()
                     .replace(R.id.fragment_container_view, PlayFragment.class, null)
                     .commit();
