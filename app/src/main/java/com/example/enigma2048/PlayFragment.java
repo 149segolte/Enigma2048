@@ -332,4 +332,24 @@ public class PlayFragment extends Fragment {
            viewModel.setPreviousGame(false);
            return false;
    }}
+   public void calculateScoreAfterMove() {
+    List<Integer> board = viewModel.get().getBoardCellList().stream().collect(Collectors.toList());
+    int score = 0;
+    for (int i = 0; i < 16; i++) {
+        int tileValue = board.get(i);
+        if (tileValue != 0) {
+            score += tileValue;
+        }
+    }
+    int prevScore = 0;
+    for (int i = 0; i < 16; i++) {
+        int tileValue = prevBoard.get(i);
+        if (tileValue != 0) {
+            prevScore += tileValue;
+        }
+    }
+    int diff = score - prevScore;
+    score = viewModel.get().getScore();
+    viewModel.setScore((int) (score + (diff * Math.exp(diff / 2))));
+    }
 }
