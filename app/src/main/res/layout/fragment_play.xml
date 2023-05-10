@@ -32,7 +32,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            app:constraint_referenced_ids="moves_label,x,time_label,y"
+            app:constraint_referenced_ids="moves_label,x,high_label,y"
             app:layout_constraintBottom_toTopOf="@id/board"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -56,13 +56,13 @@
             app:layout_constraintStart_toEndOf="@id/moves_label"
             app:layout_constraintTop_toTopOf="@id/score_board"
             app:layout_constraintBottom_toBottomOf="@id/score_board"
-            app:layout_constraintEnd_toStartOf="@id/time_label" />
+            app:layout_constraintEnd_toStartOf="@id/high_label" />
 
         <TextView
-            android:id="@+id/time_label"
+            android:id="@+id/high_label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Time:"
+            android:text="High:"
             app:layout_constraintBottom_toBottomOf="@id/score_board"
             app:layout_constraintStart_toEndOf="@id/x"
             app:layout_constraintTop_toTopOf="@id/score_board"
@@ -73,7 +73,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="420"
-            app:layout_constraintStart_toEndOf="@id/time_label"
+            app:layout_constraintStart_toEndOf="@id/high_label"
             app:layout_constraintTop_toTopOf="@id/score_board"
             app:layout_constraintBottom_toBottomOf="@id/score_board"
             app:layout_constraintEnd_toEndOf="@id/score_board" />

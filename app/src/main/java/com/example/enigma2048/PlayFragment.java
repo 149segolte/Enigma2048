@@ -28,7 +28,7 @@ public class PlayFragment extends Fragment {
     private RuntimeStateViewModel viewModel;
     private TextView score;
     private TextView moves;
-    private TextView time;
+    private TextView high;
     private TableLayout board;
     private int[] boardCache;
     private List<Integer> prevBoard;
@@ -67,14 +67,14 @@ public class PlayFragment extends Fragment {
 
         score = view.findViewById(R.id.score);
         moves = view.findViewById(R.id.x);
-        time = view.findViewById(R.id.y);
+        high = view.findViewById(R.id.y);
         board = view.findViewById(R.id.board);
 
         viewModel = new ViewModelProvider(requireActivity()).get(RuntimeStateViewModel.class);
         viewModel.observe(getViewLifecycleOwner(), state -> {
             score.setText(String.valueOf(state.getScore()));
             moves.setText(String.valueOf(state.getMoves()));
-            time.setText(String.valueOf(state.getTime()));
+            high.setText(String.valueOf(state.getHigh()));
 
             int[] array = new int[state.getBoardCellCount()];
             for(int i = 0; i < array.length; i++) array[i] = state.getBoardCell(i);

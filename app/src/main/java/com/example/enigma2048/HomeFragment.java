@@ -95,9 +95,10 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
             for (int i = 0; i < 16; i++) {
                 board[i] = 0;
             }
-            board[0] = 2;
-            board[5] = 2;
-            board[11] = 4;
+            int randomIndex1 = (int) (Math.random() * 16);
+            int randomIndex2 = (int) (Math.random() * 16);
+            board[randomIndex1] = 2;
+            board[randomIndex2] = 2;
             viewModel.setBoard(Arrays.stream(board).boxed().collect(Collectors.toList()));
             getParentFragmentManager().beginTransaction()
                     .replace(R.id.fragment_container_view, PlayFragment.class, null)

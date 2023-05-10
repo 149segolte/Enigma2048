@@ -24,8 +24,8 @@ public class RuntimeStateViewModel extends ViewModel {
         data.setValue(data.getValue().toBuilder().setMoves(moves).build());
     }
 
-    public void setTime(int time) {
-        data.setValue(data.getValue().toBuilder().setTime(time).build());
+    public void setHigh(int high) {
+        data.setValue(data.getValue().toBuilder().setHigh(high).build());
     }
 
     public void setBoardCell(int index, int value) {

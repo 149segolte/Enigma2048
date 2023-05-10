@@ -6,7 +6,7 @@ option java_multiple_files = true;
 message RuntimeState {
   int32 score = 1;
   int32 moves = 2;
-  int32 time = 3;
+  int32 high = 3;
 
   repeated int32 boardCell = 4;
 

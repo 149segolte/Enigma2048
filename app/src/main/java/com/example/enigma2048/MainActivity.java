@@ -34,7 +34,7 @@ public class MainActivity extends AppCompatActivity {
                             dataStoreUpdate.toBuilder()
                                     .setScore(state.getScore())
                                     .setMoves(state.getMoves())
-                                    .setTime(state.getTime())
+                                    .setHigh(state.getHigh())
                                     .clearBoardCell()
                                     .addAllBoardCell(state.getBoardCellList())
                                     .setPreviousGame(state.getPreviousGame())
