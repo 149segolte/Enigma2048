@@ -153,7 +153,7 @@ public class PlayFragment extends Fragment {
 
         @Override
         public boolean onFling(MotionEvent event1, MotionEvent event2, float velocityX, float velocityY) {
-            
+
             float diffY = event2.getY() - event1.getY();
             float diffX = event2.getX() - event1.getX();
             float angle = (float) Math.atan2(diffY, diffX) * 180 / (float) Math.PI;
@@ -321,7 +321,7 @@ public class PlayFragment extends Fragment {
                     a.set(random,2);
                 else
                     a.set(random,4);
-                    flag=1;
+                flag=1;
             }
         }
         viewModel.setBoard(a);
@@ -331,29 +331,29 @@ public class PlayFragment extends Fragment {
         List<Integer> a=viewModel.get().getBoardCellList().stream().collect(Collectors.toList());
         Collections.sort(a);
         if(a.get(0)==0)
-           return true;
-       else {
-           viewModel.setPreviousGame(false);
-           return false;
-   }}
-   public void calculateScoreAfterMove() {
-    List<Integer> board = viewModel.get().getBoardCellList().stream().collect(Collectors.toList());
-    int score = 0;
-    for (int i = 0; i < 16; i++) {
-        int tileValue = board.get(i);
-        if (tileValue != 0) {
-            score += tileValue;
+            return true;
+        else {
+            viewModel.setPreviousGame(false);
+            return false;
+        }}
+    public void calculateScoreAfterMove() {
+        List<Integer> board = viewModel.get().getBoardCellList().stream().collect(Collectors.toList());
+        int score = 0;
+        for (int i = 0; i < 16; i++) {
+            int tileValue = board.get(i);
+            if (tileValue != 0) {
+                score += tileValue;
+            }
         }
-    }
-    int prevScore = 0;
-    for (int i = 0; i < 16; i++) {
-        int tileValue = prevBoard.get(i);
-        if (tileValue != 0) {
-            prevScore += tileValue;
+        int prevScore = 0;
+        for (int i = 0; i < 16; i++) {
+            int tileValue = prevBoard.get(i);
+            if (tileValue != 0) {
+                prevScore += tileValue;
+            }
         }
+        int diff = score - prevScore;
+        score = viewModel.get().getScore();
+        viewModel.setScore((int) (score + (diff * Math.exp(diff / 2))));
     }
-    int diff = score - prevScore;
-    score = viewModel.get().getScore();
-    viewModel.setScore((int) (score + (diff * Math.exp(diff / 2))));
-    }
 }
