@@ -31,6 +31,7 @@ public class PlayFragment extends Fragment {
     private TextView time;
     private TableLayout board;
     private int[] boardCache;
+    private List<Integer> prevBoard;
     private GestureDetectorCompat gestureDetector;
 
     public PlayFragment() {
@@ -157,6 +158,8 @@ public class PlayFragment extends Fragment {
             float diffX = event2.getX() - event1.getX();
             float angle = (float) Math.atan2(diffY, diffX) * 180 / (float) Math.PI;
             float distance = (float) Math.sqrt(diffX * diffX + diffY * diffY);
+            prevBoard=viewModel.get().getBoardCellList().stream().collect(Collectors.toList());
+            viewModel.setMoves(viewModel.get().getMoves()+1);
 
             if (distance > SWIPE_THRESHOLD) {
                 if (angle > -45 && angle <= 60) {
@@ -178,6 +181,7 @@ public class PlayFragment extends Fragment {
             }
             gameOver();
             randomTile();
+            calculateScoreAfterMove();
             return true;
         }
     }
