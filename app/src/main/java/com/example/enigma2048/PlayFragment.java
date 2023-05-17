@@ -181,9 +181,8 @@ public class PlayFragment extends Fragment {
                     board = swipeUp();
                 }
             }
-            gameOver();
-            randomTile();
-            calculateScoreAfterMove();
+
+            board = randomTile(board);
             return true;
         }
     }
@@ -309,24 +308,28 @@ public class PlayFragment extends Fragment {
     }
 
     // random tile genertor
-    public void randomTile(){
-        List<Integer> a=viewModel.get().getBoardCellList().stream().collect(Collectors.toList());
-        Random rand = new Random();
-        int flag=0 ;
-        while(flag!=1 ){
-            int random = rand.nextInt(16);
-            if(a.get(random)==0){
-                //place a tile
-                int n = rand.nextInt(2);
-                if(n==1)
-                    a.set(random,2);
-                else
-                    a.set(random,4);
-                flag=1;
+    public List<Integer> randomTile(List<Integer> board) {
+        if (board.contains(0)) {
+            Random rand = new Random();
+            int flag = 0;
+            while (flag != 1) {
+                int random = rand.nextInt(16);
+                if (board.get(random) == 0) {
+                    //place a tile
+                    int n = rand.nextInt(4);
+                    if (n == 1)
+                        board.set(random, 4);
+                    else
+                        board.set(random, 2);
+                    flag = 1;
+                }
             }
+        } else {
+            gameOver();
         }
-        viewModel.setBoard(a);
+        return board;
     }
+
     // function for check game over
     public boolean gameOver(){
         List<Integer> a=viewModel.get().getBoardCellList().stream().collect(Collectors.toList());
