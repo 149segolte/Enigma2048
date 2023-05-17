@@ -289,6 +289,7 @@ public class PlayFragment extends Fragment {
     // function for check game over
     public void gameOver() {
         board.setOnTouchListener(null);
+        viewModel.set(RuntimeState.getDefaultInstance());
         MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(getContext());
         builder.setTitle("Game Over");
         builder.setMessage("You Lost");
@@ -310,6 +311,7 @@ public class PlayFragment extends Fragment {
                 getParentFragmentManager().beginTransaction().replace(R.id.fragment_container_view, HomeFragment.class, null).commit();
             }
         });
+        builder.setCancelable(false);
         builder.show();
     }
 

@@ -56,9 +56,9 @@ public class MainActivity extends AppCompatActivity {
         MaterialToolbar toolbar = findViewById(R.id.toolbar);
         toolbar.setOnMenuItemClickListener(item -> {
             int id = item.getItemId();
-            //fragmentManager.beginTransaction()
-            //      .replace(R.id.fragment_container_view, AboutFragment.class, null)
-            //    .commit();
+            fragmentManager.beginTransaction()
+                    .replace(R.id.fragment_container_view, AboutFragment.class, null)
+                    .commit();
             return id == R.id.action_about;
         });
     }
