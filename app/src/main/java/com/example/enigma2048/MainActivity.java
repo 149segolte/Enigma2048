@@ -16,30 +16,27 @@ import io.reactivex.rxjava3.core.Single;
 
 public class MainActivity extends AppCompatActivity {
     private RxDataStore<RuntimeState> dataStore;
-    private RuntimeStateViewModel viewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        dataStore = new RxDataStoreBuilder<RuntimeState>(this, /* fileName= */ "state.pb", new RuntimeStateSerializer()).build();
-        viewModel = new ViewModelProvider(this).get(RuntimeStateViewModel.class);
+        dataStore = new RxDataStoreBuilder<>(this, /* fileName= */ "state.pb", new RuntimeStateSerializer()).build();
+        RuntimeStateViewModel viewModel = new ViewModelProvider(this).get(RuntimeStateViewModel.class);
         viewModel.set(dataStore.data().blockingFirst());
         viewModel.observe(this, state -> {
             Log.d("DataStore", "Saving state:\n" + state.toString());
-            if (state != null) {
-                dataStore.updateDataAsync(dataStoreUpdate ->
-                        Single.just(
-                                dataStoreUpdate.toBuilder()
-                                        .setScore(state.getScore())
-                                        .setMoves(state.getMoves())
-                                        .setHigh(state.getHigh())
-                                        .clearBoardCell()
-                                        .addAllBoardCell(state.getBoardCellList())
-                                        .setPreviousGame(state.getPreviousGame())
-                                        .build()));
-            }
+            dataStore.updateDataAsync(dataStoreUpdate ->
+                    Single.just(
+                            dataStoreUpdate.toBuilder()
+                                    .setScore(state.getScore())
+                                    .setMoves(state.getMoves())
+                                    .setHigh(state.getHigh())
+                                    .clearBoardCell()
+                                    .addAllBoardCell(state.getBoardCellList())
+                                    .setPreviousGame(state.getPreviousGame())
+                                    .build()));
         });
 
         RuntimeState state = viewModel.get();

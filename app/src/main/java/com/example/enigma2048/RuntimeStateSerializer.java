@@ -1,5 +1,6 @@
 package com.example.enigma2048;
 
+import androidx.annotation.NonNull;
 import androidx.datastore.core.Serializer;
 
 import java.io.InputStream;
@@ -15,7 +16,7 @@ class RuntimeStateSerializer implements Serializer<RuntimeState> {
     }
 
     @Override
-    public RuntimeState readFrom(InputStream input, Continuation<? super RuntimeState> continuation) {
+    public RuntimeState readFrom(@NonNull InputStream input, Continuation<? super RuntimeState> continuation) {
         try {
             return RuntimeState.parseFrom(input);
         } catch (Exception e) {
@@ -24,7 +25,7 @@ class RuntimeStateSerializer implements Serializer<RuntimeState> {
     }
 
     @Override
-    public Object writeTo(RuntimeState t, OutputStream output, Continuation<? super Unit> continuation) {
+    public Object writeTo(RuntimeState t, @NonNull OutputStream output, Continuation<? super Unit> continuation) {
         try {
             t.writeTo(output);
         } catch (Exception e) {

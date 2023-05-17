@@ -5,6 +5,7 @@ import android.view.View;
 import android.widget.Button;
 
 import androidx.activity.OnBackPressedCallback;
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.transition.TransitionInflater;
@@ -64,7 +65,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
     }
 
     @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
+    public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
         Button playButton = view.findViewById(R.id.play_button);
@@ -76,10 +77,10 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         viewModel.observe(getViewLifecycleOwner(), (state) -> {
             previousGame = state.getPreviousGame();
             if (previousGame) {
-                playButton.setText("Continue");
+                playButton.setText(R.string.continue_button);
                 newGameButton.setVisibility(View.VISIBLE);
             } else {
-                playButton.setText("New Game");
+                playButton.setText(R.string.new_game_button);
                 newGameButton.setVisibility(View.GONE);
             }
         });

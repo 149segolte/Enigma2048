@@ -1,8 +1,10 @@
 package com.example.enigma2048;
 
 import android.os.Bundle;
+import android.view.View;
 
 import androidx.activity.OnBackPressedCallback;
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.transition.TransitionInflater;
 
@@ -34,18 +36,13 @@ public class LeaderboardsFragment extends Fragment {
     }
 
     @Override
-    public void onViewCreated(android.view.View view, Bundle savedInstanceState) {
+    public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
         MaterialToolbar toolbar = getActivity().findViewById(R.id.toolbar);
         toolbar.setNavigationIcon(R.drawable.baseline_arrow_back_24);
         toolbar.setTitle(R.string.title_leaderboards);
-        toolbar.setNavigationOnClickListener(v -> {
-            getParentFragmentManager().beginTransaction()
-                    .replace(R.id.fragment_container_view, HomeFragment.class, null)
-                    .commit();
-        });
+        toolbar.setNavigationOnClickListener(v -> getParentFragmentManager().beginTransaction().replace(R.id.fragment_container_view, HomeFragment.class, null).commit());
         toolbar.getMenu().findItem(R.id.action_about).setVisible(false);
     }
-
 }

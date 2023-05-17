@@ -11,7 +11,12 @@ public class RuntimeStateViewModel extends ViewModel {
     private final MutableLiveData<RuntimeState> data = new MutableLiveData<>();
 
     public void set(RuntimeState state) {
-        data.setValue(state);
+        if (state.getPreviousGame()) {
+            data.setValue(state);
+        } else {
+            data.setValue(RuntimeState.getDefaultInstance());
+            setPreviousGame(false);
+        }
     }
 
     public void setScore(int score) {
