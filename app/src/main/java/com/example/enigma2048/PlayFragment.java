@@ -1,5 +1,6 @@
 package com.example.enigma2048;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.GestureDetector;
@@ -7,6 +8,7 @@ import android.view.MotionEvent;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.OnBackPressedCallback;
 import androidx.core.content.ContextCompat;
@@ -18,7 +20,9 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.transition.TransitionInflater;
 
 import com.google.android.material.appbar.MaterialToolbar;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
@@ -30,8 +34,7 @@ public class PlayFragment extends Fragment {
     private TextView moves;
     private TextView high;
     private TableLayout board;
-    private int[] boardCache;
-    private List<Integer> prevBoard;
+    private List<Integer> currBoard;
     private GestureDetectorCompat gestureDetector;
 
     public PlayFragment() {
@@ -76,12 +79,11 @@ public class PlayFragment extends Fragment {
             moves.setText(String.valueOf(state.getMoves()));
             high.setText(String.valueOf(state.getHigh()));
 
-            int[] array = new int[state.getBoardCellCount()];
-            for(int i = 0; i < array.length; i++) array[i] = state.getBoardCell(i);
-            if (boardCache != null && boardCache == array) {
+            List<Integer> array = viewModel.get().getBoardCellList();
+            if (array.equals(currBoard)) {
                 return;
             } else {
-                boardCache = array;
+                currBoard = array;
             }
 
             if (board.getChildCount() != 4) {
@@ -158,25 +160,25 @@ public class PlayFragment extends Fragment {
             float diffX = event2.getX() - event1.getX();
             float angle = (float) Math.atan2(diffY, diffX) * 180 / (float) Math.PI;
             float distance = (float) Math.sqrt(diffX * diffX + diffY * diffY);
-            prevBoard=viewModel.get().getBoardCellList().stream().collect(Collectors.toList());
-            viewModel.setMoves(viewModel.get().getMoves()+1);
+            viewModel.setMoves(viewModel.get().getMoves() + 1);
 
+            List<Integer> board = currBoard.stream().map(i -> i).collect(Collectors.toList());
             if (distance > SWIPE_THRESHOLD) {
                 if (angle > -45 && angle <= 60) {
                     Log.d("Swipe", "Right");
-                    swipeRight();
+                    board = swipeRight();
                 }
                 if (angle > 60 && angle <= 120) {
                     Log.d("Swipe", "Down");
-                    swipeDown();
+                    board = swipeDown();
                 }
                 if (angle > 120 || angle <= -120) {
                     Log.d("Swipe", "Left");
-                    swipeLeft();
+                    board = swipeLeft();
                 }
                 if (angle > -120 && angle <= -45) {
                     Log.d("Swipe", "Up");
-                    swipeUp();
+                    board = swipeUp();
                 }
             }
             gameOver();
@@ -186,8 +188,8 @@ public class PlayFragment extends Fragment {
         }
     }
 
-    public void swipeRight() {
-        List<Integer> board = viewModel.get().getBoardCellList().stream().collect(Collectors.toList());
+    public List<Integer> swipeRight() {
+        List<Integer> board = currBoard.stream().collect(Collectors.toList());
         for (int i = 0; i < 4; ++i) {
             for (int j = 2; j >= 0; --j) {
                 int index = i * 4 + j;
@@ -213,11 +215,11 @@ public class PlayFragment extends Fragment {
                 }
             }
         }
-        viewModel.setBoard(board);
+        return board;
     }
 
-    public void swipeLeft() {
-        List<Integer> board = viewModel.get().getBoardCellList().stream().collect(Collectors.toList());
+    public List<Integer> swipeLeft() {
+        List<Integer> board = currBoard.stream().map(i -> i).collect(Collectors.toList());
         for (int i = 0; i < 4; ++i) {
             for (int j = 1; j < 4; ++j) {
                 int index = i * 4 + j;
@@ -243,42 +245,11 @@ public class PlayFragment extends Fragment {
                 }
             }
         }
-        viewModel.setBoard(board);
+        return board;
     }
 
-
-    public void swipeUp() {
-        List<Integer> board = viewModel.get().getBoardCellList().stream().collect(Collectors.toList());
-        for (int j = 0; j < 4; ++j) {
-            for (int i = 1; i < 4; ++i) {
-                int index = i * 4 + j;
-                if (board.get(index) != 0) {
-                    int k = i - 1;
-                    while (k >= 0 && board.get(k * 4 + j) == 0) {
-                        --k;
-                    }
-                    if (k >= 0 && board.get(k * 4 + j).equals(board.get(index))) {
-                        board.set(k * 4 + j, board.get(k * 4 + j) * 2);
-                        board.set(index, 0);
-                    } else {
-                        k = i - 1;
-                        while (k >= 0 && board.get(k * 4 + j) == 0) {
-                            --k;
-                        }
-                        ++k;
-                        if (k != i) {
-                            board.set(k * 4 + j, board.get(index));
-                            board.set(index, 0);
-                        }
-                    }
-                }
-            }
-        }
-        viewModel.setBoard(board);
-    }
-
-    public void swipeDown() {
-        List<Integer> board = viewModel.get().getBoardCellList().stream().collect(Collectors.toList());
+    public List<Integer> swipeDown() {
+        List<Integer> board = currBoard.stream().map(i -> i).collect(Collectors.toList());
         for (int j = 0; j < 4; ++j) {
             for (int i = 2; i >= 0; --i) {
                 int index = i * 4 + j;
@@ -304,7 +275,37 @@ public class PlayFragment extends Fragment {
                 }
             }
         }
-        viewModel.setBoard(board);
+        return board;
+    }
+
+    public List<Integer> swipeUp() {
+        List<Integer> board = currBoard.stream().map(i -> i).collect(Collectors.toList());
+        for (int j = 0; j < 4; ++j) {
+            for (int i = 1; i < 4; ++i) {
+                int index = i * 4 + j;
+                if (board.get(index) != 0) {
+                    int k = i - 1;
+                    while (k >= 0 && board.get(k * 4 + j) == 0) {
+                        --k;
+                    }
+                    if (k >= 0 && board.get(k * 4 + j).equals(board.get(index))) {
+                        board.set(k * 4 + j, board.get(k * 4 + j) * 2);
+                        board.set(index, 0);
+                    } else {
+                        k = i - 1;
+                        while (k >= 0 && board.get(k * 4 + j) == 0) {
+                            --k;
+                        }
+                        ++k;
+                        if (k != i) {
+                            board.set(k * 4 + j, board.get(index));
+                            board.set(index, 0);
+                        }
+                    }
+                }
+            }
+        }
+        return board;
     }
 
     // random tile genertor
