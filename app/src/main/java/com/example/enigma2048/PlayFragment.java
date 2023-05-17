@@ -331,15 +331,28 @@ public class PlayFragment extends Fragment {
     }
 
     // function for check game over
-    public boolean gameOver(){
-        List<Integer> a=viewModel.get().getBoardCellList().stream().collect(Collectors.toList());
-        Collections.sort(a);
-        if(a.get(0)==0)
-            return true;
-        else {
-            viewModel.setPreviousGame(false);
-            return false;
-        }}
+    public void gameOver() {
+        board.setOnTouchListener(null);
+        HomeFragment.new_game(viewModel);
+        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(getContext());
+        builder.setTitle("Game Over");
+        builder.setMessage("You Lost");
+        builder.setPositiveButton("New Game", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                viewModel.setPreviousGame(true);
+            }
+        });
+        builder.setNegativeButton("Main Menu", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                viewModel.setPreviousGame(false);
+                getParentFragmentManager().beginTransaction().replace(R.id.fragment_container_view, new HomeFragment()).commit();
+            }
+        });
+        builder.show();
+    }
+
     public void calculateScoreAfterMove() {
         List<Integer> board = viewModel.get().getBoardCellList().stream().collect(Collectors.toList());
         int score = 0;
