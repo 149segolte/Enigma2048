@@ -79,6 +79,14 @@ public class PlayFragment extends Fragment {
             moves.setText(String.valueOf(state.getMoves()));
             high.setText(String.valueOf(state.getHigh()));
 
+            if (state.getMoves() > 0) {
+                if (state.getScore() > state.getHigh()) {
+                    viewModel.setHigh(state.getScore());
+                }
+                if (!state.getPreviousGame())
+                    viewModel.setPreviousGame(true);
+            }
+
             List<Integer> array = viewModel.get().getBoardCellList();
             if (array.equals(currBoard)) {
                 return;
@@ -183,6 +191,8 @@ public class PlayFragment extends Fragment {
             }
 
             board = randomTile(board);
+            viewModel.setScore(score(board));
+            viewModel.setBoard(board);
             return true;
         }
     }
@@ -353,24 +363,12 @@ public class PlayFragment extends Fragment {
         builder.show();
     }
 
-    public void calculateScoreAfterMove() {
-        List<Integer> board = viewModel.get().getBoardCellList().stream().collect(Collectors.toList());
-        int score = 0;
-        for (int i = 0; i < 16; i++) {
-            int tileValue = board.get(i);
-            if (tileValue != 0) {
-                score += tileValue;
-            }
-        }
-        int prevScore = 0;
-        for (int i = 0; i < 16; i++) {
-            int tileValue = prevBoard.get(i);
-            if (tileValue != 0) {
-                prevScore += tileValue;
-            }
-        }
-        int diff = score - prevScore;
-        score = viewModel.get().getScore();
-        viewModel.setScore((int) (score + (diff * Math.exp(diff / 2))));
+    public int score(List<Integer> board) {
+        int[] tileValues = board.stream().filter(num -> num > 4).mapToInt(num -> num).toArray();
+        int score = (int) Arrays.stream(tileValues).average().orElse(1);
+        score = (int) (score * (1.5 - (1.0 / (1.0 + Math.exp(-(viewModel.get().getMoves() / 100.0)))))) / 2;
+        int currentScore = viewModel.get().getScore();
+        Log.d("Scoring", "calculateScoreAfterMove: " + score);
+        return (currentScore + Math.max(score, 1));
     }
 }
