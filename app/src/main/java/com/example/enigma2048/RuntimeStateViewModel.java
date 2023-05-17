@@ -5,9 +5,7 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModel;
 
-import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class RuntimeStateViewModel extends ViewModel {
     private final MutableLiveData<RuntimeState> data = new MutableLiveData<>();

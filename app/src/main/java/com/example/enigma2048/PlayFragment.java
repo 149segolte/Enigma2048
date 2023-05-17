@@ -8,22 +8,18 @@ import android.view.MotionEvent;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.activity.OnBackPressedCallback;
 import androidx.core.content.ContextCompat;
 import androidx.core.graphics.ColorUtils;
 import androidx.core.view.GestureDetectorCompat;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.transition.TransitionInflater;
 
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
@@ -47,16 +43,11 @@ public class PlayFragment extends Fragment {
 
         gestureDetector = new GestureDetectorCompat(getContext(), new MyGestureListener());
 
-        TransitionInflater inflater = TransitionInflater.from(requireContext());
-        setEnterTransition(inflater.inflateTransition(R.transition.fade));
-        setExitTransition(inflater.inflateTransition(R.transition.fade));
-
         // This callback will only be called when MyFragment is at least Started.
         OnBackPressedCallback callback = new OnBackPressedCallback(true /* enabled by default */) {
             @Override
             public void handleOnBackPressed() {
-                FragmentManager fragmentManager = getParentFragmentManager();
-                fragmentManager.beginTransaction()
+                getParentFragmentManager().beginTransaction()
                         .replace(R.id.fragment_container_view, HomeFragment.class, null)
                         .commit();
             }
@@ -143,58 +134,13 @@ public class PlayFragment extends Fragment {
         MaterialToolbar toolbar = getActivity().findViewById(R.id.toolbar);
         toolbar.setNavigationIcon(R.drawable.baseline_arrow_back_24);
         toolbar.setNavigationOnClickListener(v -> {
-            FragmentManager fragmentManager = getParentFragmentManager();
-            fragmentManager.beginTransaction()
+            getParentFragmentManager().beginTransaction()
                     .replace(R.id.fragment_container_view, HomeFragment.class, null)
                     .commit();
         });
-        toolbar.getMenu().findItem(R.id.action_settings).setVisible(false);
+        toolbar.getMenu().findItem(R.id.action_about).setVisible(false);
 
         viewModel.setPreviousGame(true);
-    }
-
-    private class MyGestureListener extends GestureDetector.SimpleOnGestureListener {
-
-        private static final int SWIPE_THRESHOLD = 150;
-        @Override
-        public boolean onDown(MotionEvent event) {
-            return true;
-        }
-
-        @Override
-        public boolean onFling(MotionEvent event1, MotionEvent event2, float velocityX, float velocityY) {
-
-            float diffY = event2.getY() - event1.getY();
-            float diffX = event2.getX() - event1.getX();
-            float angle = (float) Math.atan2(diffY, diffX) * 180 / (float) Math.PI;
-            float distance = (float) Math.sqrt(diffX * diffX + diffY * diffY);
-            viewModel.setMoves(viewModel.get().getMoves() + 1);
-
-            List<Integer> board = currBoard.stream().map(i -> i).collect(Collectors.toList());
-            if (distance > SWIPE_THRESHOLD) {
-                if (angle > -45 && angle <= 60) {
-                    Log.d("Swipe", "Right");
-                    board = swipeRight();
-                }
-                if (angle > 60 && angle <= 120) {
-                    Log.d("Swipe", "Down");
-                    board = swipeDown();
-                }
-                if (angle > 120 || angle <= -120) {
-                    Log.d("Swipe", "Left");
-                    board = swipeLeft();
-                }
-                if (angle > -120 && angle <= -45) {
-                    Log.d("Swipe", "Up");
-                    board = swipeUp();
-                }
-            }
-
-            board = randomTile(board);
-            viewModel.setScore(score(board));
-            viewModel.setBoard(board);
-            return true;
-        }
     }
 
     public List<Integer> swipeRight() {
@@ -343,21 +289,25 @@ public class PlayFragment extends Fragment {
     // function for check game over
     public void gameOver() {
         board.setOnTouchListener(null);
-        HomeFragment.new_game(viewModel);
         MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(getContext());
         builder.setTitle("Game Over");
         builder.setMessage("You Lost");
         builder.setPositiveButton("New Game", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
+                HomeFragment.new_game(viewModel);
                 viewModel.setPreviousGame(true);
+                getParentFragmentManager().beginTransaction()
+                        .replace(R.id.fragment_container_view, PlayFragment.class, null)
+                        .commit();
             }
         });
         builder.setNegativeButton("Main Menu", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
+                HomeFragment.new_game(viewModel);
                 viewModel.setPreviousGame(false);
-                getParentFragmentManager().beginTransaction().replace(R.id.fragment_container_view, new HomeFragment()).commit();
+                getParentFragmentManager().beginTransaction().replace(R.id.fragment_container_view, HomeFragment.class, null).commit();
             }
         });
         builder.show();
@@ -370,5 +320,50 @@ public class PlayFragment extends Fragment {
         int currentScore = viewModel.get().getScore();
         Log.d("Scoring", "calculateScoreAfterMove: " + score);
         return (currentScore + Math.max(score, 1));
+    }
+
+    private class MyGestureListener extends GestureDetector.SimpleOnGestureListener {
+
+        private static final int SWIPE_THRESHOLD = 150;
+
+        @Override
+        public boolean onDown(MotionEvent event) {
+            return true;
+        }
+
+        @Override
+        public boolean onFling(MotionEvent event1, MotionEvent event2, float velocityX, float velocityY) {
+
+            float diffY = event2.getY() - event1.getY();
+            float diffX = event2.getX() - event1.getX();
+            float angle = (float) Math.atan2(diffY, diffX) * 180 / (float) Math.PI;
+            float distance = (float) Math.sqrt(diffX * diffX + diffY * diffY);
+            viewModel.setMoves(viewModel.get().getMoves() + 1);
+
+            List<Integer> board = currBoard.stream().map(i -> i).collect(Collectors.toList());
+            if (distance > SWIPE_THRESHOLD) {
+                if (angle > -45 && angle <= 60) {
+                    Log.d("Swipe", "Right");
+                    board = swipeRight();
+                }
+                if (angle > 60 && angle <= 120) {
+                    Log.d("Swipe", "Down");
+                    board = swipeDown();
+                }
+                if (angle > 120 || angle <= -120) {
+                    Log.d("Swipe", "Left");
+                    board = swipeLeft();
+                }
+                if (angle > -120 && angle <= -45) {
+                    Log.d("Swipe", "Up");
+                    board = swipeUp();
+                }
+            }
+
+            board = randomTile(board);
+            viewModel.setScore(score(board));
+            viewModel.setBoard(board);
+            return true;
+        }
     }
 }

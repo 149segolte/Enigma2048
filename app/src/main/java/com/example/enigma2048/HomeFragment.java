@@ -23,6 +23,19 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         super(R.layout.fragment_home);
     }
 
+    public static void new_game(RuntimeStateViewModel vm) {
+        vm.set(RuntimeState.getDefaultInstance());
+        int[] board = new int[16];
+        for (int i = 0; i < 16; i++) {
+            board[i] = 0;
+        }
+        int randomIndex1 = (int) (Math.random() * 16);
+        int randomIndex2 = (int) (Math.random() * 16);
+        board[randomIndex1] = 2;
+        board[randomIndex2] = 2;
+        vm.setBoard(Arrays.stream(board).boxed().collect(Collectors.toList()));
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -39,7 +52,8 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
                 MaterialAlertDialogBuilder dialogBuilder = new MaterialAlertDialogBuilder(requireContext());
                 dialogBuilder.setTitle("Are you sure you want to exit?");
                 dialogBuilder.setMessage("Your progress will be lost.");
-                dialogBuilder.setOnDismissListener((dialog) -> {});
+                dialogBuilder.setOnDismissListener((dialog) -> {
+                });
                 dialogBuilder.setNeutralButton("Cancel", (dialog, which) -> dialog.dismiss());
                 dialogBuilder.setPositiveButton("Yes", (dialog, which) -> getActivity().finishAffinity());
                 dialogBuilder.show();
@@ -79,7 +93,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         toolbar.setNavigationIcon(null);
         toolbar.setTitle(null);
         toolbar.setNavigationOnClickListener(null);
-        toolbar.getMenu().findItem(R.id.action_settings).setVisible(true);
+        toolbar.getMenu().findItem(R.id.action_about).setVisible(true);
     }
 
     @Override
@@ -101,18 +115,5 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         } else {
             getActivity().finishAffinity();
         }
-    }
-
-    public static void new_game(RuntimeStateViewModel vm) {
-        vm.set(RuntimeState.getDefaultInstance());
-        int[] board = new int[16];
-        for (int i = 0; i < 16; i++) {
-            board[i] = 0;
-        }
-        int randomIndex1 = (int) (Math.random() * 16);
-        int randomIndex2 = (int) (Math.random() * 16);
-        board[randomIndex1] = 2;
-        board[randomIndex2] = 2;
-        vm.setBoard(Arrays.stream(board).boxed().collect(Collectors.toList()));
     }
 }

@@ -30,15 +30,15 @@ public class MainActivity extends AppCompatActivity {
             Log.d("DataStore", "Saving state:\n" + state.toString());
             if (state != null) {
                 dataStore.updateDataAsync(dataStoreUpdate ->
-                    Single.just(
-                            dataStoreUpdate.toBuilder()
-                                    .setScore(state.getScore())
-                                    .setMoves(state.getMoves())
-                                    .setHigh(state.getHigh())
-                                    .clearBoardCell()
-                                    .addAllBoardCell(state.getBoardCellList())
-                                    .setPreviousGame(state.getPreviousGame())
-                                    .build()));
+                        Single.just(
+                                dataStoreUpdate.toBuilder()
+                                        .setScore(state.getScore())
+                                        .setMoves(state.getMoves())
+                                        .setHigh(state.getHigh())
+                                        .clearBoardCell()
+                                        .addAllBoardCell(state.getBoardCellList())
+                                        .setPreviousGame(state.getPreviousGame())
+                                        .build()));
             }
         });
 
@@ -56,13 +56,10 @@ public class MainActivity extends AppCompatActivity {
         MaterialToolbar toolbar = findViewById(R.id.toolbar);
         toolbar.setOnMenuItemClickListener(item -> {
             int id = item.getItemId();
-            if (id == R.id.action_settings) {
-                fragmentManager.beginTransaction()
-                        .replace(R.id.fragment_container_view, SettingsFragment.class, null)
-                        .commit();
-                return true;
-            }
-            return false;
+            //fragmentManager.beginTransaction()
+            //      .replace(R.id.fragment_container_view, AboutFragment.class, null)
+            //    .commit();
+            return id == R.id.action_about;
         });
     }
 }
