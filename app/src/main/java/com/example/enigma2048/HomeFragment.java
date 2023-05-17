@@ -90,16 +90,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
                     .replace(R.id.fragment_container_view, PlayFragment.class, null)
                     .commit();
         } else if (id == R.id.new_game_button || id == R.id.play_button) {
-            viewModel.set(RuntimeState.getDefaultInstance());
-            int[] board = new int[16];
-            for (int i = 0; i < 16; i++) {
-                board[i] = 0;
-            }
-            int randomIndex1 = (int) (Math.random() * 16);
-            int randomIndex2 = (int) (Math.random() * 16);
-            board[randomIndex1] = 2;
-            board[randomIndex2] = 2;
-            viewModel.setBoard(Arrays.stream(board).boxed().collect(Collectors.toList()));
+            new_game(viewModel);
             getParentFragmentManager().beginTransaction()
                     .replace(R.id.fragment_container_view, PlayFragment.class, null)
                     .commit();
@@ -110,5 +101,18 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         } else {
             getActivity().finishAffinity();
         }
+    }
+
+    public static void new_game(RuntimeStateViewModel vm) {
+        vm.set(RuntimeState.getDefaultInstance());
+        int[] board = new int[16];
+        for (int i = 0; i < 16; i++) {
+            board[i] = 0;
+        }
+        int randomIndex1 = (int) (Math.random() * 16);
+        int randomIndex2 = (int) (Math.random() * 16);
+        board[randomIndex1] = 2;
+        board[randomIndex2] = 2;
+        vm.setBoard(Arrays.stream(board).boxed().collect(Collectors.toList()));
     }
 }
